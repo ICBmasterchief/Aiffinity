@@ -1,35 +1,48 @@
-// src/app/chat/page.js
+// src/components/Chat.js
 "use client";
 
-import { useState, useContext } from "react";
-import { useLazyQuery } from "@apollo/client";
-import { CHAT_WITH_OPENAI } from "@/graphql/chatQueries";
-import { AuthContext } from "@/context/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { useState } from "react";
 
-function ChatPage() {
-  const { user } = useContext(AuthContext);
+export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [chatWithOpenAI, { loading }] = useLazyQuery(CHAT_WITH_OPENAI);
+  const [loading, setLoading] = useState(false);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
-    setMessages([...messages, userMessage]);
-    setInput("");
+    const newMessage = { role: "user", content: input };
+    const updatedMessages = [...messages, newMessage];
 
-    chatWithOpenAI({
-      variables: { prompt: input },
-      onCompleted: (data) => {
-        const aiMessage = { role: "assistant", content: data.chatWithOpenAI };
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
-      },
-      onError: (error) => {
-        console.error("Error:", error);
-      },
-    });
+    setMessages(updatedMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/openai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: input,
+          history: updatedMessages,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const assistantMessage = { role: "assistant", content: data.message };
+        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+      } else {
+        console.error("Error:", data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -39,7 +52,6 @@ function ChatPage() {
 
   return (
     <div className="max-w-2xl mx-auto mt-8">
-      <h1 className="text-2xl font-bold mb-4">Chat con ChatGPT</h1>
       <div className="border p-4 h-96 overflow-y-scroll">
         {messages.map((msg, index) => (
           <div
@@ -59,7 +71,7 @@ function ChatPage() {
             </p>
           </div>
         ))}
-        {loading && <p>ChatGPT está escribiendo...</p>}
+        {loading && <p>Escribiendo...</p>}
       </div>
       <form onSubmit={handleSubmit} className="mt-4 flex">
         <input
@@ -79,5 +91,3 @@ function ChatPage() {
     </div>
   );
 }
-
-export default ProtectedRoute(ChatPage);

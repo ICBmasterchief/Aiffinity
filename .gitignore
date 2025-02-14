@@ -29,3 +29,6 @@ dist/
 # Otros archivos temporales
 .DS_Store
 Thumbs.db
+
+# Archivos específicos a ignorar
+*.ignore

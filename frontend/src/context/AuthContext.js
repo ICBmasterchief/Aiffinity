@@ -16,7 +16,13 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded);
+        if (decoded.exp * 1000 < Date.now()) {
+          console.warn("Token expirado. Cerrando sesión...");
+          localStorage.removeItem("token");
+          setUser(null);
+        } else {
+          setUser(decoded);
+        }
       } catch (error) {
         console.error("Token inválido", error);
         localStorage.removeItem("token");
@@ -29,7 +35,13 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.setItem("token", token);
       const decoded = jwtDecode(token);
-      setUser(decoded);
+      if (decoded.exp * 1000 < Date.now()) {
+        console.warn("Token expirado. Cerrando sesión...");
+        localStorage.removeItem("token");
+        setUser(null);
+      } else {
+        setUser(decoded);
+      }
     } catch (error) {
       console.error("Error decodificando el token en login:", error);
     }

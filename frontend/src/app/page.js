@@ -4,7 +4,7 @@
 import { useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Chat from "@/components/Chat";
+import Link from "next/link";
 
 function HomePage() {
   const { user, logout } = useContext(AuthContext);
@@ -18,7 +18,12 @@ function HomePage() {
       >
         Cerrar Sesión
       </button>
-      <Chat />
+      <Link
+        href="/chat"
+        className="inline-block ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Ir al Chat
+      </Link>
     </div>
   );
 }

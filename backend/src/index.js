@@ -1,6 +1,6 @@
 // src/index.js
 import express from "express";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import { authenticate, sync } from "./config/database.js"; // Ahora deberían funcionar correctamente
 import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
@@ -16,19 +16,16 @@ async function startServer() {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      // Obtener el token de las cabeceras
       const token = req.headers.authorization || "";
-      // Verificar y extraer el usuario del token
       let user = null;
       if (token) {
         try {
-          const decoded = jwt.verify(
+          user = jwt.verify(
             token.replace("Bearer ", ""),
             process.env.JWT_SECRET
           );
-          user = decoded;
         } catch (error) {
-          console.error("Token inválido:", error);
+          throw new AuthenticationError("Token expirado o inválido");
         }
       }
       return { user };

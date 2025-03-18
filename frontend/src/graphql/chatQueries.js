@@ -6,3 +6,13 @@ export const CHAT_WITH_OPENAI = gql`
     chatWithOpenAI(prompt: $prompt)
   }
 `;
+
+export const GET_USER_MESSAGES = gql`
+  query GetUserMessages {
+    getUserMessages {
+      id
+      role
+      content
+    }
+  }
+`;

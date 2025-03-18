@@ -7,17 +7,21 @@ import { AuthContext } from "@/context/AuthContext";
 
 export default function ProtectedRoute(Component) {
   return function ProtectedComponent(props) {
-    const { user } = useContext(AuthContext);
+    const { user, loading } = useContext(AuthContext);
     const router = useRouter();
 
     useEffect(() => {
-      if (!user) {
+      if (!loading && !user) {
         router.replace("/login");
       }
-    }, [user, router]);
+    }, [user, loading, router]);
+
+    if (loading) {
+      return <p>Cargando...</p>;
+    }
 
     if (!user) {
-      return null; // O muestra un indicador de carga
+      return null;
     }
 
     return <Component {...props} />;

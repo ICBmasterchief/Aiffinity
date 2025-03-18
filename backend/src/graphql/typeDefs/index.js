@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 import userTypeDefs from "./user.js";
 import openaiTypeDefs from "./openai.js";
 
-const typeDefs = gql`
+const baseTypeDefs = gql`
   type Query {
     _empty: String
   }
@@ -13,4 +13,4 @@ const typeDefs = gql`
   }
 `;
 
-export default [userTypeDefs, openaiTypeDefs];
+export default [baseTypeDefs, userTypeDefs, openaiTypeDefs];

@@ -1,6 +1,7 @@
 // src/models/User.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import ChatMessage from "./ChatMessage.js";
 
 const User = sequelize.define("User", {
   id: {
@@ -23,5 +24,8 @@ const User = sequelize.define("User", {
   },
   // Proximos nuevos campos
 });
+
+User.hasMany(ChatMessage, { foreignKey: "userId" });
+ChatMessage.belongsTo(User, { foreignKey: "userId" });
 
 export default User;

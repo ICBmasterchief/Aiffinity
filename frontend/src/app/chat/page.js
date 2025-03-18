@@ -1,9 +1,9 @@
 // src/app/chat/page.js
 "use client";
 
-import { useState, useContext } from "react";
-import { useLazyQuery } from "@apollo/client";
-import { CHAT_WITH_OPENAI } from "@/graphql/chatQueries";
+import { useEffect, useState, useContext, useRef } from "react";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { CHAT_WITH_OPENAI, GET_USER_MESSAGES } from "@/graphql/chatQueries";
 import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -11,25 +11,41 @@ function ChatPage() {
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [chatWithOpenAI, { loading }] = useLazyQuery(CHAT_WITH_OPENAI);
+
+  const chatContainerRef = useRef(null);
+
+  const [chatWithOpenAI, { loading: loadingChat }] = useLazyQuery(
+    CHAT_WITH_OPENAI,
+    {
+      onCompleted: (data) => {
+        const aiMessage = { role: "assistant", content: data.chatWithOpenAI };
+        setMessages((prev) => [...prev, aiMessage]);
+      },
+    }
+  );
+
+  const { data, loading: loadingMessages } = useQuery(GET_USER_MESSAGES, {
+    fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    if (data?.getUserMessages) {
+      setMessages(data.getUserMessages);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const sendMessage = () => {
     if (!input.trim()) return;
-
-    const userMessage = { role: "user", content: input };
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    chatWithOpenAI({ variables: { prompt: input } });
     setInput("");
-
-    chatWithOpenAI({
-      variables: { prompt: input },
-      onCompleted: (data) => {
-        const aiMessage = { role: "assistant", content: data.chatWithOpenAI };
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
-      },
-      onError: (error) => {
-        console.error("Error:", error);
-      },
-    });
   };
 
   const handleSubmit = (e) => {
@@ -37,10 +53,14 @@ function ChatPage() {
     sendMessage();
   };
 
+  if (loadingMessages) {
+    return <div>Cargando mensajes...</div>;
+  }
+
   return (
     <div className="max-w-2xl mx-auto mt-8">
       <h1 className="text-2xl font-bold mb-4">Chat con ChatGPT</h1>
-      <div className="border p-4 h-96 overflow-y-scroll">
+      <div ref={chatContainerRef} className="border p-4 h-96 overflow-y-scroll">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -59,7 +79,7 @@ function ChatPage() {
             </p>
           </div>
         ))}
-        {loading && <p>ChatGPT está escribiendo...</p>}
+        {loadingChat && <p>ChatGPT está escribiendo...</p>}
       </div>
       <form onSubmit={handleSubmit} className="mt-4 flex">
         <input

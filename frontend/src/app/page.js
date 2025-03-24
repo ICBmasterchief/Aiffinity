@@ -1,4 +1,4 @@
-// src/app/page.js
+// frontend/src/app/page.js
 "use client";
 
 import { useContext } from "react";
@@ -18,12 +18,12 @@ function HomePage() {
       >
         Cerrar Sesión
       </button>
-      <Link
+      {/* <Link
         href="/chat"
         className="inline-block ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         Ir al Chat
-      </Link>
+      </Link> */}
     </div>
   );
 }

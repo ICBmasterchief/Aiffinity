@@ -1,3 +1,4 @@
+// backend/src/graphql/resolvers/user.js
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../../models/User.js";
@@ -40,6 +41,27 @@ const userResolvers = {
         { expiresIn: "1d" }
       );
       return token;
+    },
+    updateProfile: async (
+      _,
+      { description, age, gender, photoUrl },
+      context
+    ) => {
+      if (!context.user) {
+        throw new Error("No autorizado");
+      }
+      const userId = context.user.userId;
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error("Usuario no encontrado");
+      }
+      if (description !== undefined) user.description = description;
+      if (age !== undefined) user.age = age;
+      if (gender !== undefined) user.gender = gender;
+      if (photoUrl !== undefined) user.photoUrl = photoUrl;
+
+      await user.save();
+      return user;
     },
   },
 };

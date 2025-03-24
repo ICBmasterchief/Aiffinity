@@ -1,4 +1,4 @@
-// src/graphql/userMutations.js
+// frontend/src/graphql/userMutations.js
 
 import { gql } from "@apollo/client";
 

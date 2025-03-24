@@ -1,8 +1,8 @@
-// backend/src/models/ChatMessage.js
+// backend/src/models/Swipe.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
-const ChatMessage = sequelize.define("ChatMessage", {
+const Swipe = sequelize.define("Swipe", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -12,14 +12,14 @@ const ChatMessage = sequelize.define("ChatMessage", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  role: {
-    type: DataTypes.ENUM("user", "assistant", "system"),
+  targetUserId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  content: {
-    type: DataTypes.TEXT,
+  liked: {
+    type: DataTypes.BOOLEAN,
     allowNull: false,
   },
 });
 
-export default ChatMessage;
+export default Swipe;

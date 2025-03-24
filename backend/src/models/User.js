@@ -1,4 +1,4 @@
-// src/models/User.js
+// backend/src/models/User.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 import ChatMessage from "./ChatMessage.js";
@@ -21,6 +21,18 @@ const User = sequelize.define("User", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  photoUrl: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   // Proximos nuevos campos
 });

@@ -1,9 +1,9 @@
-// src/app/register/page.js
+// frontend/src/app/register/page.js
 "use client";
 
 import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client";
-import { REGISTER_USER } from "@/graphql/userMutations";
+import { REGISTER_USER, LOGIN_USER } from "@/graphql/userMutations";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +18,6 @@ export default function RegisterPage() {
 
   const [register, { loading, error }] = useMutation(REGISTER_USER, {
     onCompleted: (data) => {
-      // Aquí puedes redirigir al usuario o mostrar un mensaje
       router.push("/login");
     },
   });

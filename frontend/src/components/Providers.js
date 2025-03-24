@@ -1,4 +1,4 @@
-// src/components/Providers.js
+// frontend/src/components/Providers.js
 "use client";
 
 import { ApolloProvider } from "@apollo/client";

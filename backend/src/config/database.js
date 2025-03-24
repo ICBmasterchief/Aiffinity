@@ -1,4 +1,4 @@
-// src/config/database.js
+// backend/src/config/database.js
 import { Sequelize } from "sequelize";
 import "dotenv/config";
 
@@ -26,7 +26,7 @@ export const authenticate = async () => {
 
 export const sync = async () => {
   try {
-    await sequelize.sync({ alter: true }); // Usa `force: true` solo en desarrollo
+    await sequelize.sync({ alter: true }); // Usar `force: true` temporalmente para reiniciar la BD
     console.log("Modelos sincronizados con la base de datos.");
   } catch (error) {
     console.error("Error al sincronizar modelos:", error);

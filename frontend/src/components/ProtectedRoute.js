@@ -1,4 +1,4 @@
-// src/components/ProtectedRoute.js
+// frontend/src/components/ProtectedRoute.js
 "use client";
 
 import { useContext, useEffect } from "react";

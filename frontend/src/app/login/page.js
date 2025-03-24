@@ -1,4 +1,4 @@
-// src/app/login/page.js
+// frontend/src/app/login/page.js
 "use client";
 
 import { useState, useContext } from "react";
@@ -19,7 +19,7 @@ export default function LoginPage() {
     onCompleted: (data) => {
       //console.log("Token recibido:", data.login); // Verificar el token aquí
       login(data.login);
-      router.push("/chat");
+      router.push("/profile");
     },
   });
 

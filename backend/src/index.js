@@ -1,4 +1,4 @@
-// src/index.js
+// backend/src/index.js
 import express from "express";
 import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import { authenticate, sync } from "./config/database.js"; // Ahora deberían funcionar correctamente

@@ -1,4 +1,4 @@
-// src/app/chat/page.js
+// frontend/src/app/chat/page.js
 "use client";
 
 import { useEffect, useState, useContext, useRef } from "react";

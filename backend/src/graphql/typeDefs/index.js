@@ -1,7 +1,8 @@
-// src/graphql/typeDefs/index.js
+// backend/src/graphql/typeDefs/index.js
 import { gql } from "apollo-server-express";
 import userTypeDefs from "./user.js";
 import openaiTypeDefs from "./openai.js";
+import swipeTypeDefs from "./swipe.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -13,4 +14,4 @@ const baseTypeDefs = gql`
   }
 `;
 
-export default [baseTypeDefs, userTypeDefs, openaiTypeDefs];
+export default [baseTypeDefs, userTypeDefs, openaiTypeDefs, swipeTypeDefs];

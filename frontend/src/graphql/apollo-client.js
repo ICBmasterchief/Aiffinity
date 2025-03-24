@@ -1,4 +1,4 @@
-// src/graphql/apollo-client.js
+// frontend/src/graphql/apollo-client.js
 
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";

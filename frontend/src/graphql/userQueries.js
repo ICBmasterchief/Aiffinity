@@ -1,4 +1,4 @@
-// src/graphql/userQueries.js
+// frontend/src/graphql/userQueries.js
 
 import { gql } from "@apollo/client";
 
@@ -8,6 +8,10 @@ export const GET_USERS = gql`
       id
       name
       email
+      description
+      age
+      gender
+      photoUrl
     }
   }
 `;
@@ -18,6 +22,32 @@ export const GET_USER = gql`
       id
       name
       email
+      description
+      age
+      gender
+      photoUrl
+    }
+  }
+`;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile(
+    $description: String
+    $age: Int
+    $gender: String
+    $photoUrl: String
+  ) {
+    updateProfile(
+      description: $description
+      age: $age
+      gender: $gender
+      photoUrl: $photoUrl
+    ) {
+      id
+      description
+      age
+      gender
+      photoUrl
     }
   }
 `;

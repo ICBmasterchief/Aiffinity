@@ -12,11 +12,40 @@ const swipeResolvers = {
       }
       const userId = context.user.userId;
 
-      // Ejemplo simple: obtener 10 usuarios aleatorios distintos al actual
+      const currentUser = await User.findByPk(userId);
+      if (!currentUser || !currentUser.gender || !currentUser.searchGender) {
+        throw new Error("Perfil incompleto");
+      }
+
+      const genderMapping = {
+        hombres: "hombre",
+        mujeres: "mujer",
+      };
+
+      let candidateGenderCondition = {};
+      if (currentUser.searchGender !== "ambos") {
+        candidateGenderCondition = {
+          gender: genderMapping[currentUser.searchGender],
+        };
+      }
+
+      const myPluralGender =
+        currentUser.gender === "hombre" ? "hombres" : "mujeres";
+
+      const candidateSearchGenderCondition = {
+        [Op.or]: [{ searchGender: "ambos" }, { searchGender: myPluralGender }],
+      };
+
+      const whereClause = {
+        id: { [Op.ne]: userId },
+        ...candidateGenderCondition,
+        [Op.and]: [candidateSearchGenderCondition],
+      };
+
       const users = await User.findAll({
-        where: { id: { [Op.ne]: userId } },
+        where: whereClause,
         limit: 10,
-        order: sequelize.random(), // "ORDER BY RAND()" en MySQL
+        order: sequelize.random(),
       });
       return users;
     },
@@ -28,7 +57,6 @@ const swipeResolvers = {
       }
       const userId = context.user.userId;
 
-      // Crear o actualizar el swipe
       await Swipe.upsert({
         userId,
         targetUserId: parseInt(targetUserId),

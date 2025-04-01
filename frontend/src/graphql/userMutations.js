@@ -30,7 +30,7 @@ export const UPDATE_PROFILE = gql`
       description: $description
       age: $age
       gender: $gender
-      $searchGender: String
+      searchGender: $searchGender
       photoUrl: $photoUrl
     ) {
       id

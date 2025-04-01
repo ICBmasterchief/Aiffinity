@@ -16,9 +16,21 @@ export default function RegisterPage() {
     password: "",
   });
 
-  const [register, { loading, error }] = useMutation(REGISTER_USER, {
+  const [loginUser] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
-      router.push("/login");
+      login(data.login);
+      router.push("/profile");
+    },
+  });
+
+  const [register, { loading, error }] = useMutation(REGISTER_USER, {
+    onCompleted: () => {
+      loginUser({
+        variables: {
+          email: formState.email,
+          password: formState.password,
+        },
+      });
     },
   });
 

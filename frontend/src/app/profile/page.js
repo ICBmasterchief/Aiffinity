@@ -5,7 +5,8 @@ import { useState, useEffect, useContext } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { GET_USER, UPDATE_PROFILE } from "@/graphql/userQueries";
+import { GET_USER } from "@/graphql/userQueries";
+import { UPDATE_PROFILE } from "@/graphql/userMutations";
 
 function ProfilePage() {
   const { user } = useContext(AuthContext);
@@ -13,6 +14,7 @@ function ProfilePage() {
     description: "",
     age: 0,
     gender: "",
+    searchGender: "",
     photoUrl: "",
   });
 
@@ -36,6 +38,7 @@ function ProfilePage() {
         description: data.getUser.description || "",
         age: data.getUser.age || 0,
         gender: data.getUser.gender || "",
+        searchGender: data.getUser.searchGender || "",
         photoUrl: data.getUser.photoUrl || "",
       });
     }
@@ -48,6 +51,7 @@ function ProfilePage() {
         description: formData.description,
         age: parseInt(formData.age),
         gender: formData.gender,
+        searchGender: formData.searchGender,
         photoUrl: formData.photoUrl,
       },
     });
@@ -77,18 +81,39 @@ function ProfilePage() {
             className="border rounded w-full p-2 text-black"
             value={formData.age}
             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+            required
           />
         </label>
         <label>
           Género:
-          <input
-            type="text"
-            className="border rounded w-full p-2 text-black"
+          <select
             value={formData.gender}
             onChange={(e) =>
               setFormData({ ...formData, gender: e.target.value })
             }
-          />
+            required
+            className="border rounded w-full p-2 text-black"
+          >
+            <option value="">Selecciona tu género</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+          </select>
+        </label>
+        <label>
+          Busco:
+          <select
+            value={formData.searchGender || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, searchGender: e.target.value })
+            }
+            required
+            className="border rounded w-full p-2 text-black"
+          >
+            <option value="">Selecciona una opción</option>
+            <option value="hombres">Hombres</option>
+            <option value="mujeres">Mujeres</option>
+            <option value="ambos">Ambos</option>
+          </select>
         </label>
         <label>
           Foto (URL):

@@ -44,7 +44,7 @@ const userResolvers = {
     },
     updateProfile: async (
       _,
-      { description, age, gender, photoUrl },
+      { description, age, gender, searchGender, photoUrl },
       context
     ) => {
       if (!context.user) {
@@ -56,8 +56,9 @@ const userResolvers = {
         throw new Error("Usuario no encontrado");
       }
       if (description !== undefined) user.description = description;
-      if (age !== undefined) user.age = age;
-      if (gender !== undefined) user.gender = gender;
+      user.age = age;
+      user.gender = gender;
+      user.searchGender = searchGender;
       if (photoUrl !== undefined) user.photoUrl = photoUrl;
 
       await user.save();

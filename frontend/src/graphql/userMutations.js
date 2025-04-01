@@ -17,3 +17,28 @@ export const LOGIN_USER = gql`
     login(email: $email, password: $password)
   }
 `;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile(
+    $description: String
+    $age: Int
+    $gender: String
+    $searchGender: String
+    $photoUrl: String
+  ) {
+    updateProfile(
+      description: $description
+      age: $age
+      gender: $gender
+      $searchGender: String
+      photoUrl: $photoUrl
+    ) {
+      id
+      description
+      age
+      gender
+      searchGender
+      photoUrl
+    }
+  }
+`;

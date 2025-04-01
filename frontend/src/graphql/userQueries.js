@@ -11,6 +11,7 @@ export const GET_USERS = gql`
       description
       age
       gender
+      searchGender
       photoUrl
     }
   }
@@ -25,28 +26,7 @@ export const GET_USER = gql`
       description
       age
       gender
-      photoUrl
-    }
-  }
-`;
-
-export const UPDATE_PROFILE = gql`
-  mutation UpdateProfile(
-    $description: String
-    $age: Int
-    $gender: String
-    $photoUrl: String
-  ) {
-    updateProfile(
-      description: $description
-      age: $age
-      gender: $gender
-      photoUrl: $photoUrl
-    ) {
-      id
-      description
-      age
-      gender
+      searchGender
       photoUrl
     }
   }

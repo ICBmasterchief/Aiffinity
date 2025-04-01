@@ -9,6 +9,7 @@ const userTypeDefs = gql`
     description: String
     age: Int
     gender: String
+    searchGender: String
     photoUrl: String
   }
 
@@ -24,6 +25,7 @@ const userTypeDefs = gql`
       description: String
       age: Int
       gender: String
+      searchGender: String
       photoUrl: String
     ): User!
   }

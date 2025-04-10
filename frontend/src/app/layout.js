@@ -1,7 +1,7 @@
 // frontend/src/app/layout.js
 import "@/styles/globals.css";
 import Providers from "@/components/Providers";
-import Header from "@/components/Header"; // Opcional, si deseas tener un header global
+import Header from "@/components/Header";
 
 export const metadata = {
   title: "AIffinity",

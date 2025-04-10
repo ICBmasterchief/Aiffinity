@@ -1,7 +1,7 @@
 // backend/src/index.js
 import express from "express";
 import { ApolloServer, AuthenticationError } from "apollo-server-express";
-import { authenticate, sync } from "./config/database.js"; // Ahora deberían funcionar correctamente
+import { authenticate, sync } from "./config/database.js";
 import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
 import dotenv from "dotenv";

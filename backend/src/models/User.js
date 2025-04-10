@@ -38,7 +38,6 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  // Proximos nuevos campos
 });
 
 User.hasMany(ChatMessage, { foreignKey: "userId" });

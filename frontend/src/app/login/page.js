@@ -17,9 +17,8 @@ export default function LoginPage() {
 
   const [loginUser, { loading, error }] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
-      //console.log("Token recibido:", data.login); // Verificar el token aquí
       login(data.login);
-      router.push("/profile");
+      router.push("/discover");
     },
   });
 

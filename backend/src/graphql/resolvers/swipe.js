@@ -1,12 +1,13 @@
 // backend/src/graphql/resolvers/swipe.js
 import Swipe from "../../models/Swipe.js";
 import User from "../../models/User.js";
+import Match from "../../models/Match.js";
 import { Op } from "sequelize";
 import sequelize from "../../config/database.js";
 
 const swipeResolvers = {
   Query: {
-    getRandomUsers: async (_, __, context) => {
+    getRandomUser: async (_, __, context) => {
       if (!context.user) {
         throw new Error("No autorizado");
       }
@@ -36,18 +37,26 @@ const swipeResolvers = {
         [Op.or]: [{ searchGender: "ambos" }, { searchGender: myPluralGender }],
       };
 
+      const swipedRecords = await Swipe.findAll({
+        attributes: ["targetUserId"],
+        where: { userId },
+      });
+      const swipedUserIds = swipedRecords.map((record) => record.targetUserId);
+
       const whereClause = {
-        id: { [Op.ne]: userId },
+        id: {
+          [Op.ne]: userId,
+          ...(swipedUserIds.length ? { [Op.notIn]: swipedUserIds } : {}),
+        },
         ...candidateGenderCondition,
-        [Op.and]: [candidateSearchGenderCondition],
+        ...candidateSearchGenderCondition,
       };
 
-      const users = await User.findAll({
+      const candidate = await User.findOne({
         where: whereClause,
-        limit: 10,
         order: sequelize.random(),
       });
-      return users;
+      return candidate;
     },
   },
   Mutation: {
@@ -63,7 +72,37 @@ const swipeResolvers = {
         liked,
       });
 
-      return liked ? "Le diste Like al usuario" : "Le diste Dislike al usuario";
+      let matchCreated = false;
+      if (liked) {
+        const reciprocalSwipe = await Swipe.findOne({
+          where: {
+            userId: targetUserId,
+            targetUserId: userId,
+            liked: true,
+          },
+        });
+        if (reciprocalSwipe) {
+          const [id1, id2] = [userId, targetUserId].sort((a, b) => a - b);
+          const existingMatch = await Match.findOne({
+            where: {
+              user1Id: id1,
+              user2Id: id2,
+            },
+          });
+          if (!existingMatch) {
+            await Match.create({
+              user1Id: id1,
+              user2Id: id2,
+            });
+            matchCreated = true;
+          }
+        }
+      }
+      return matchCreated
+        ? "¡Has hecho match! ¡Ve a la sección de matches para chatear!"
+        : liked
+        ? "Le diste Like al usuario"
+        : "Le diste Dislike al usuario";
     },
   },
 };

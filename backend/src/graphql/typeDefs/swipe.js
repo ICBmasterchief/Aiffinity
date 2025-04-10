@@ -7,7 +7,7 @@ const swipeTypeDefs = gql`
   }
 
   extend type Query {
-    getRandomUsers: [User!]!
+    getRandomUser: User
   }
 `;
 

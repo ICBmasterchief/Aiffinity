@@ -1,12 +1,14 @@
 // frontend/src/graphql/swipeQueries.js
 import { gql } from "@apollo/client";
 
-export const GET_RANDOM_USERS = gql`
-  query GetRandomUsers {
-    getRandomUsers {
+export const GET_RANDOM_USER = gql`
+  query GetRandomUser {
+    getRandomUser {
       id
       name
       description
+      gender
+      searchGender
       photoUrl
     }
   }

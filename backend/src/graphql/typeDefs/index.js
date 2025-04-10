@@ -3,6 +3,7 @@ import { gql } from "apollo-server-express";
 import userTypeDefs from "./user.js";
 import openaiTypeDefs from "./openai.js";
 import swipeTypeDefs from "./swipe.js";
+import matchTypeDefs from "./match.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -14,4 +15,10 @@ const baseTypeDefs = gql`
   }
 `;
 
-export default [baseTypeDefs, userTypeDefs, openaiTypeDefs, swipeTypeDefs];
+export default [
+  baseTypeDefs,
+  userTypeDefs,
+  openaiTypeDefs,
+  swipeTypeDefs,
+  matchTypeDefs,
+];

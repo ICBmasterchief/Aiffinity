@@ -1,79 +1,91 @@
 // frontend/src/components/Chat.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  GET_CONVERSATION,
+  SEND_MESSAGE,
+} from "@/graphql/chatConversationQueries";
 
-export default function Chat() {
+export default function Chat({ matchId, chatPartner }) {
+  const {
+    data,
+    loading: loadingMessages,
+    refetch,
+  } = useQuery(GET_CONVERSATION, {
+    variables: { matchId },
+    fetchPolicy: "network-only",
+  });
+
+  const [sendMessageMutation] = useMutation(SEND_MESSAGE);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const chatContainerRef = useRef(null);
 
-  const sendMessage = async () => {
+  useEffect(() => {
+    if (data?.getConversationMessages) {
+      setMessages(data.getConversationMessages);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
     if (!input.trim()) return;
 
-    const newMessage = { role: "user", content: input };
-    const updatedMessages = [...messages, newMessage];
-
-    setMessages(updatedMessages);
-    setInput("");
-    setLoading(true);
+    const newMsg = {
+      senderId: "me",
+      content: input,
+      createdAt: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, newMsg]);
 
     try {
-      const response = await fetch("/api/openai/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: input,
-          history: updatedMessages,
-        }),
+      await sendMessageMutation({
+        variables: { matchId, content: input },
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const assistantMessage = { role: "assistant", content: data.message };
-        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
-      } else {
-        console.error("Error:", data.message);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error("Error enviando mensaje:", err);
     }
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage();
+    setInput("");
+    refetch();
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <div className="border p-4 h-96 overflow-y-scroll">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`mb-4 ${
-              msg.role === "user" ? "text-right" : "text-left"
-            }`}
-          >
-            <p
-              className={`inline-block p-2 rounded ${
-                msg.role === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-black"
+    <div>
+      <div ref={chatContainerRef} className="border p-4 h-96 overflow-y-scroll">
+        {loadingMessages ? (
+          <p>Cargando mensajes...</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`mb-4 ${
+                msg.senderId === "me" ? "text-right" : "text-left"
               }`}
             >
-              {msg.content}
-            </p>
-          </div>
-        ))}
-        {loading && <p>Escribiendo...</p>}
+              <p
+                className={`inline-block p-2 rounded ${
+                  msg.senderId === "me"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                {msg.content}
+              </p>
+            </div>
+          ))
+        )}
       </div>
-      <form onSubmit={handleSubmit} className="mt-4 flex">
+      <form onSubmit={handleSendMessage} className="mt-4 flex">
         <input
           type="text"
           value={input}

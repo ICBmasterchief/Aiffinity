@@ -3,6 +3,7 @@ import userResolvers from "./user.js";
 import openaiResolvers from "./openai.js";
 import swipeResolvers from "./swipe.js";
 import matchResolvers from "./match.js";
+import chatConversationResolvers from "./chatConversation.js";
 
 const resolvers = {
   Query: {
@@ -10,12 +11,14 @@ const resolvers = {
     ...openaiResolvers.Query,
     ...swipeResolvers.Query,
     ...matchResolvers.Query,
+    ...chatConversationResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
     ...openaiResolvers.Mutation,
     ...swipeResolvers.Mutation,
     ...matchResolvers.Mutation,
+    ...chatConversationResolvers.Mutation,
   },
 };
 

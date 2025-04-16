@@ -26,15 +26,15 @@ function MatchesPage() {
               key={match.id}
               className="border p-4 rounded flex items-center space-x-4"
             >
-              {match.photoUrl && (
+              {match.user.photoUrl && (
                 <img
-                  src={match.photoUrl}
-                  alt={match.name}
+                  src={match.user.photoUrl}
+                  alt={match.user.name}
                   className="w-16 h-16 rounded-full object-cover"
                 />
               )}
               <div className="flex-1">
-                <p className="font-semibold">{match.name}</p>
+                <p className="font-semibold">{match.user.name}</p>
               </div>
               <Link href={`/chat/${match.id}`}>
                 <button className="px-4 py-2 bg-blue-500 text-white rounded">

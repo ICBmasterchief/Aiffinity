@@ -14,6 +14,10 @@ const baseTypeDefs = gql`
   type Mutation {
     _empty: String
   }
+
+  type Subscription {
+    _empty: String
+  }
 `;
 
 export default [

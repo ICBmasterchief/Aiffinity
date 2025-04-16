@@ -18,6 +18,10 @@ const chatConversationTypeDefs = gql`
   extend type Mutation {
     sendConversationMessage(matchId: ID!, content: String!): UserChatMessage!
   }
+
+  extend type Subscription {
+    conversationMessageAdded(matchId: ID!): UserChatMessage!
+  }
 `;
 
 export default chatConversationTypeDefs;

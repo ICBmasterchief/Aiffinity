@@ -19,10 +19,15 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "graphql": "^16.9.0",
+    "graphql-redis-subscriptions": "^2.7.0",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^6.0.4",
+    "ioredis": "^5.6.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.4",
     "openai": "^4.73.1",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",

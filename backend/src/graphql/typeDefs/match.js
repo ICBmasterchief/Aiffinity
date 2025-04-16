@@ -2,8 +2,14 @@
 import { gql } from "apollo-server-express";
 
 const matchTypeDefs = gql`
+  type MatchSummary {
+    id: ID!
+    user: User!
+  }
+
   extend type Query {
-    getMatches: [User!]!
+    getMatches: [MatchSummary!]!
+    getMatchInfo(matchId: ID!): MatchSummary
   }
 `;
 

@@ -13,37 +13,37 @@ export default function ProtectedRoute(Component) {
     const router = useRouter();
     const pathname = usePathname();
     const [profileChecked, setProfileChecked] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
-    const { loading: userLoading } = useQuery(GET_USER, {
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    const { data, loading: userLoading } = useQuery(GET_USER, {
       variables: { id: user?.userId },
       skip: !user,
-      onCompleted: (data) => {
-        if (data?.getUser) {
-          const { age, gender, searchGender } = data.getUser;
-          if ((!age || !gender || !searchGender) && pathname !== "/profile") {
-            router.replace("/profile");
-          }
-        }
-        setProfileChecked(true);
-      },
-      onError: () => {
-        setProfileChecked(true);
-      },
     });
 
     useEffect(() => {
+      if (!mounted) return;
       if (!authLoading && !user) {
         router.replace("/login");
+        return;
       }
-    }, [user, authLoading, router]);
+      if (data?.getUser) {
+        const { age, gender, searchGender } = data.getUser;
+        if ((!age || !gender || !searchGender) && pathname !== "/profile") {
+          router.replace("/profile");
+        }
+        setProfileChecked(true);
+      }
+    }, [mounted, data, authLoading, user, pathname, router]);
 
     if (authLoading || userLoading || !profileChecked) {
       return <p>Cargando...</p>;
     }
 
-    if (!user) {
-      return null;
-    }
+    if (!user) return null;
 
     return <Component {...props} />;
   };

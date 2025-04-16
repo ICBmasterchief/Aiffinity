@@ -3,20 +3,20 @@
 
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import { GET_USER } from "@/graphql/userQueries";
+import { GET_MATCH_INFO } from "@/graphql/matchQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Chat from "@/components/Chat";
 
 function ChatPage() {
   const { matchId } = useParams();
-  const { data, loading, error } = useQuery(GET_USER, {
-    variables: { id: matchId },
+  const { data, loading, error } = useQuery(GET_MATCH_INFO, {
+    variables: { matchId },
   });
 
   if (loading) return <p>Cargando conversación...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const chatPartner = data?.getUser;
+  const chatPartner = data?.getMatchInfo?.user;
 
   return (
     <div className="max-w-2xl mx-auto p-4">

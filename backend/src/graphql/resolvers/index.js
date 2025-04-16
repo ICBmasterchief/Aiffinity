@@ -20,6 +20,9 @@ const resolvers = {
     ...matchResolvers.Mutation,
     ...chatConversationResolvers.Mutation,
   },
+  Subscription: {
+    ...chatConversationResolvers.Subscription,
+  },
 };
 
 export default resolvers;

@@ -15,14 +15,36 @@ const matchResolvers = {
         },
       });
 
-      const matchUsers = await Promise.all(
+      const matchSummaries = await Promise.all(
         matches.map(async (match) => {
           const otherUserId =
             match.user1Id === userId ? match.user2Id : match.user1Id;
-          return await User.findByPk(otherUserId);
+          const otherUser = await User.findByPk(otherUserId);
+          return {
+            id: match.id,
+            user: otherUser,
+          };
         })
       );
-      return matchUsers;
+      return matchSummaries;
+    },
+    getMatchInfo: async (_, { matchId }, context) => {
+      if (!context.user) throw new Error("No autorizado");
+
+      const match = await Match.findByPk(matchId);
+      if (!match) throw new Error("Match no encontrado");
+
+      const userId = context.user.userId;
+      const otherUserId =
+        match.user1Id === userId ? match.user2Id : match.user1Id;
+      const otherUser = await User.findByPk(otherUserId);
+
+      if (!otherUser) throw new Error("Usuario no encontrado");
+
+      return {
+        id: match.id,
+        user: otherUser,
+      };
     },
   },
 };

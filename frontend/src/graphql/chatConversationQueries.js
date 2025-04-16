@@ -26,3 +26,16 @@ export const SEND_MESSAGE = gql`
     }
   }
 `;
+
+export const CONVERSATION_MESSAGE_SUBSCRIPTION = gql`
+  subscription OnConversationMessageAdded($matchId: ID!) {
+    conversationMessageAdded(matchId: $matchId) {
+      id
+      conversationId
+      senderId
+      content
+      createdAt
+      updatedAt
+    }
+  }
+`;

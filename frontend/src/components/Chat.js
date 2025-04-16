@@ -1,14 +1,18 @@
 // frontend/src/components/Chat.js
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useState, useEffect, useRef, useContext } from "react";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import {
   GET_CONVERSATION,
   SEND_MESSAGE,
+  CONVERSATION_MESSAGE_SUBSCRIPTION,
 } from "@/graphql/chatConversationQueries";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function Chat({ matchId, chatPartner }) {
+  const { user } = useContext(AuthContext);
+
   const {
     data,
     loading: loadingMessages,
@@ -19,6 +23,14 @@ export default function Chat({ matchId, chatPartner }) {
   });
 
   const [sendMessageMutation] = useMutation(SEND_MESSAGE);
+
+  const { data: subscriptionData, error: subscriptionError } = useSubscription(
+    CONVERSATION_MESSAGE_SUBSCRIPTION,
+    {
+      variables: { matchId },
+    }
+  );
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const chatContainerRef = useRef(null);
@@ -28,6 +40,21 @@ export default function Chat({ matchId, chatPartner }) {
       setMessages(data.getConversationMessages);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (subscriptionData?.conversationMessageAdded) {
+      setMessages((prev) => [
+        ...prev,
+        subscriptionData.conversationMessageAdded,
+      ]);
+    }
+  }, [subscriptionData]);
+
+  useEffect(() => {
+    if (subscriptionError) {
+      console.error("Error en la suscripción:", subscriptionError);
+    }
+  }, [subscriptionError]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -41,7 +68,7 @@ export default function Chat({ matchId, chatPartner }) {
     if (!input.trim()) return;
 
     const newMsg = {
-      senderId: "me",
+      senderId: user?.userId,
       content: input,
       createdAt: new Date().toISOString(),
     };
@@ -65,24 +92,25 @@ export default function Chat({ matchId, chatPartner }) {
         {loadingMessages ? (
           <p>Cargando mensajes...</p>
         ) : (
-          messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`mb-4 ${
-                msg.senderId === "me" ? "text-right" : "text-left"
-              }`}
-            >
-              <p
-                className={`inline-block p-2 rounded ${
-                  msg.senderId === "me"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-black"
-                }`}
+          messages.map((msg, index) => {
+            const isMyMessage = String(msg.senderId) === String(user?.userId);
+            return (
+              <div
+                key={index}
+                className={`mb-4 ${isMyMessage ? "text-right" : "text-left"}`}
               >
-                {msg.content}
-              </p>
-            </div>
-          ))
+                <p
+                  className={`inline-block p-2 rounded ${
+                    isMyMessage
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                >
+                  {msg.content}
+                </p>
+              </div>
+            );
+          })
         )}
       </div>
       <form onSubmit={handleSendMessage} className="mt-4 flex">

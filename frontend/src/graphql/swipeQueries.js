@@ -16,6 +16,14 @@ export const GET_RANDOM_USER = gql`
 
 export const LIKE_USER = gql`
   mutation LikeUser($targetUserId: ID!, $liked: Boolean!) {
-    likeUser(targetUserId: $targetUserId, liked: $liked)
+    likeUser(targetUserId: $targetUserId, liked: $liked) {
+      matchCreated
+      matchedUser {
+        id
+        name
+        photoUrl
+      }
+      matchId
+    }
   }
 `;

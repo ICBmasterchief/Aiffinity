@@ -34,7 +34,9 @@ const swipeResolvers = {
         currentUser.gender === "hombre" ? "hombres" : "mujeres";
 
       const candidateSearchGenderCondition = {
-        [Op.or]: [{ searchGender: "ambos" }, { searchGender: myPluralGender }],
+        searchGender: {
+          [Op.or]: ["ambos", myPluralGender],
+        },
       };
 
       const swipedRecords = await Swipe.findAll({
@@ -73,6 +75,8 @@ const swipeResolvers = {
       });
 
       let matchCreated = false;
+      let matchId = null;
+
       if (liked) {
         const reciprocalSwipe = await Swipe.findOne({
           where: {
@@ -82,27 +86,31 @@ const swipeResolvers = {
           },
         });
         if (reciprocalSwipe) {
-          const [id1, id2] = [userId, targetUserId].sort((a, b) => a - b);
-          const existingMatch = await Match.findOne({
+          const [id1, id2] = [userId, targetUserId]
+            .map(Number)
+            .sort((a, b) => a - b);
+          let match = await Match.findOne({
             where: {
               user1Id: id1,
               user2Id: id2,
             },
           });
-          if (!existingMatch) {
-            await Match.create({
+          if (!match) {
+            match = await Match.create({
               user1Id: id1,
               user2Id: id2,
             });
             matchCreated = true;
+            matchId = match.id;
           }
         }
       }
-      return matchCreated
-        ? "¡Has hecho match! ¡Ve a la sección de matches para chatear!"
-        : liked
-        ? "Le diste Like al usuario"
-        : "Le diste Dislike al usuario";
+
+      const matchedUser = matchCreated
+        ? await User.findByPk(targetUserId)
+        : null;
+
+      return { matchCreated, matchedUser, matchId };
     },
   },
 };

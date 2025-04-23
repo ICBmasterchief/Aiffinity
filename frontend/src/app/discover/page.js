@@ -5,30 +5,33 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_RANDOM_USER, LIKE_USER } from "@/graphql/swipeQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import MatchModal from "@/components/MatchModal";
+import { useRouter } from "next/navigation";
 
 function DiscoverPage() {
+  const router = useRouter();
   const { data, loading, error, refetch } = useQuery(GET_RANDOM_USER);
+  const candidate = data?.getRandomUser;
+
+  const [showModal, setShowModal] = useState(false);
+  const [matchedUser, setMatchedUser] = useState(null);
+  const [matchId, setMatchId] = useState(null);
+
   const [likeUser] = useMutation(LIKE_USER, {
-    onCompleted: (data) => {
-      const message = data.likeUser;
-      if (message.includes("match")) {
-        setMatchMessage(message);
+    onCompleted: ({ likeUser }) => {
+      const { matchCreated, matchedUser, matchId } = likeUser;
+      if (matchCreated) {
+        setMatchedUser(matchedUser);
+        setMatchId(matchId);
         setShowModal(true);
       }
       refetch();
     },
-    onError: (error) => console.error(error.message),
+    onError: (error) => console.error(error),
   });
 
-  const [showModal, setShowModal] = useState(false);
-  const [matchMessage, setMatchMessage] = useState("");
-
-  const candidate = data?.getRandomUser;
-
   const handleChat = () => {
-    // Redirige a la página de chat o match
-    // Por ejemplo: router.push("/matches");
     setShowModal(false);
+    router.push(`/chat/${matchId}`);
   };
 
   if (loading) return <p>Cargando usuarios...</p>;
@@ -75,8 +78,7 @@ function DiscoverPage() {
 
       {showModal && (
         <MatchModal
-          matchMessage={matchMessage}
-          candidate={candidate}
+          matchedUser={matchedUser}
           onClose={() => setShowModal(false)}
           onChat={handleChat}
         />

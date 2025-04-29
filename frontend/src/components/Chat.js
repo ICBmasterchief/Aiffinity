@@ -28,6 +28,7 @@ export default function Chat({ matchId, chatPartner }) {
     CONVERSATION_MESSAGE_SUBSCRIPTION,
     {
       variables: { matchId },
+      shouldResubscribe: true,
     }
   );
 

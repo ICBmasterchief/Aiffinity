@@ -5,6 +5,7 @@ import openaiTypeDefs from "./openai.js";
 import swipeTypeDefs from "./swipe.js";
 import matchTypeDefs from "./match.js";
 import chatConversationTypeDefs from "./chatConversation.js";
+import notificationTypeDefs from "./notification.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -27,4 +28,5 @@ export default [
   swipeTypeDefs,
   matchTypeDefs,
   chatConversationTypeDefs,
+  notificationTypeDefs,
 ];

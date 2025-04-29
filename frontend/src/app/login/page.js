@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [loginUser, { loading, error }] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
       login(data.login);
-      router.push("/discover");
+      window.location.href = "/discover";
     },
   });
 

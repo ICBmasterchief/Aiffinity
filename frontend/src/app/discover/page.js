@@ -1,38 +1,23 @@
 // frontend/src/app/discover/page.js
 "use client";
-import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_RANDOM_USER, LIKE_USER } from "@/graphql/swipeQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import MatchModal from "@/components/MatchModal";
 import { useRouter } from "next/navigation";
 
 function DiscoverPage() {
   const router = useRouter();
-  const { data, loading, error, refetch } = useQuery(GET_RANDOM_USER);
+  const { data, loading, error, refetch } = useQuery(GET_RANDOM_USER, {
+    fetchPolicy: "network-only",
+  });
   const candidate = data?.getRandomUser;
 
-  const [showModal, setShowModal] = useState(false);
-  const [matchedUser, setMatchedUser] = useState(null);
-  const [matchId, setMatchId] = useState(null);
-
   const [likeUser] = useMutation(LIKE_USER, {
-    onCompleted: ({ likeUser }) => {
-      const { matchCreated, matchedUser, matchId } = likeUser;
-      if (matchCreated) {
-        setMatchedUser(matchedUser);
-        setMatchId(matchId);
-        setShowModal(true);
-      }
+    onCompleted: () => {
       refetch();
     },
     onError: (error) => console.error(error),
   });
-
-  const handleChat = () => {
-    setShowModal(false);
-    router.push(`/chat/${matchId}`);
-  };
 
   if (loading) return <p>Cargando usuarios...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -74,14 +59,6 @@ function DiscoverPage() {
             </button>
           </div>
         </div>
-      )}
-
-      {showModal && (
-        <MatchModal
-          matchedUser={matchedUser}
-          onClose={() => setShowModal(false)}
-          onChat={handleChat}
-        />
       )}
     </div>
   );

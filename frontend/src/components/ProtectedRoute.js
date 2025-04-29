@@ -19,7 +19,11 @@ export default function ProtectedRoute(Component) {
       setMounted(true);
     }, []);
 
-    const { data, loading: userLoading } = useQuery(GET_USER, {
+    const {
+      data,
+      loading: userLoading,
+      error: userError,
+    } = useQuery(GET_USER, {
       variables: { id: user?.userId },
       skip: !user,
     });
@@ -30,14 +34,28 @@ export default function ProtectedRoute(Component) {
         router.replace("/login");
         return;
       }
-      if (data?.getUser) {
+      if (userError) {
+        setProfileChecked(true);
+        return;
+      }
+      if (!userLoading && data?.getUser) {
         const { age, gender, searchGender } = data.getUser;
         if ((!age || !gender || !searchGender) && pathname !== "/profile") {
           router.replace("/profile");
+          return;
         }
         setProfileChecked(true);
       }
-    }, [mounted, data, authLoading, user, pathname, router]);
+    }, [
+      mounted,
+      authLoading,
+      user,
+      userLoading,
+      data,
+      userError,
+      pathname,
+      router,
+    ]);
 
     if (authLoading || userLoading || !profileChecked) {
       return <p>Cargando...</p>;

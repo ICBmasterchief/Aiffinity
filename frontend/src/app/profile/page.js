@@ -20,6 +20,7 @@ function ProfilePage() {
 
   const { data, loading, error } = useQuery(GET_USER, {
     variables: { id: user?.userId },
+    fetchPolicy: "network-only",
     skip: !user,
   });
 

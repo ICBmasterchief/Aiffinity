@@ -11,6 +11,7 @@ function ChatPage() {
   const { matchId } = useParams();
   const { data, loading, error } = useQuery(GET_MATCH_INFO, {
     variables: { matchId },
+    fetchPolicy: "network-only",
   });
 
   if (loading) return <p>Cargando conversación...</p>;

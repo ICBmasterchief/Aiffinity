@@ -6,23 +6,25 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
+const HOST =
+  typeof window !== "undefined" ? window.location.hostname : "localhost";
+const HTTP_URI = `http://${HOST}:2159/graphql`;
+const WS_URI = `ws://${HOST}:2159/graphql`;
+
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    for (const err of graphQLErrors) {
-      if (err.extensions?.code === "UNAUTHENTICATED") {
+    graphQLErrors.forEach((e) => {
+      if (e.extensions?.code === "UNAUTHENTICATED") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
-    }
+    });
   }
-  if (networkError) {
-    console.error(`[Network error]: ${networkError}`);
-  }
+  if (networkError) console.error("[Network error]", networkError);
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = localStorage.getItem("token");
   return {
     headers: {
       ...headers,
@@ -31,40 +33,45 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const httpLink = new HttpLink({
-  uri: "http://localhost:2159/graphql",
-});
+function makeWsClient() {
+  return createClient({
+    url: WS_URI,
+    retryAttempts: Infinity,
+    connectionParams: () => {
+      const token = localStorage.getItem("token");
+      return { authorization: token ? `Bearer ${token}` : "" };
+    },
+  });
+}
 
-const wsLink =
-  typeof window !== "undefined"
-    ? new GraphQLWsLink(
-        createClient({
-          url: "ws://localhost:2159/graphql",
-          connectionParams: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-      )
-    : null;
+export let wsClient = makeWsClient();
+let wsLink = new GraphQLWsLink(wsClient);
 
-const splitLink =
-  typeof window !== "undefined" && wsLink != null
-    ? split(
-        ({ query }) => {
-          const definition = getMainDefinition(query);
-          return (
-            definition.kind === "OperationDefinition" &&
-            definition.operation === "subscription"
-          );
-        },
-        wsLink,
-        httpLink
-      )
-    : httpLink;
+function buildSplit() {
+  const httpLink = new HttpLink({ uri: HTTP_URI });
+  return split(
+    ({ query }) => {
+      const def = getMainDefinition(query);
+      return (
+        def.kind === "OperationDefinition" && def.operation === "subscription"
+      );
+    },
+    wsLink,
+    httpLink
+  );
+}
 
 const client = new ApolloClient({
-  link: errorLink.concat(authLink).concat(splitLink),
+  link: errorLink.concat(authLink).concat(buildSplit()),
   cache: new InMemoryCache(),
 });
+
+export function renewWebSocket() {
+  console.log("🔌 resetting WebSocket link");
+  wsClient.dispose?.();
+  wsClient = makeWsClient();
+  wsLink = new GraphQLWsLink(wsClient);
+  client.setLink(errorLink.concat(authLink).concat(buildSplit()));
+}
 
 export default client;

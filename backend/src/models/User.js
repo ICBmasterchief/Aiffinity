@@ -38,6 +38,10 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 User.hasMany(ChatMessage, { foreignKey: "userId" });

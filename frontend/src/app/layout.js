@@ -2,6 +2,7 @@
 import "@/styles/globals.css";
 import Providers from "@/components/Providers";
 import Header from "@/components/Header";
+import MatchNotifier from "@/components/MatchNotifier";
 
 export const metadata = {
   title: "AIffinity",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <Header />
           {children}
+          <MatchNotifier />
         </Providers>
       </body>
     </html>

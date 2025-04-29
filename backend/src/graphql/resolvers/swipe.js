@@ -4,6 +4,10 @@ import User from "../../models/User.js";
 import Match from "../../models/Match.js";
 import { Op } from "sequelize";
 import sequelize from "../../config/database.js";
+import Notification from "../../models/Notification.js";
+import redisPubSub from "../../redisPubSub.js";
+
+const NOTIF_TOPIC = "NOTIFICATION_ADDED";
 
 const swipeResolvers = {
   Query: {
@@ -75,7 +79,7 @@ const swipeResolvers = {
       });
 
       let matchCreated = false;
-      let matchId = null;
+      let match = null;
 
       if (liked) {
         const reciprocalSwipe = await Swipe.findOne({
@@ -89,28 +93,55 @@ const swipeResolvers = {
           const [id1, id2] = [userId, targetUserId]
             .map(Number)
             .sort((a, b) => a - b);
-          let match = await Match.findOne({
-            where: {
-              user1Id: id1,
-              user2Id: id2,
-            },
-          });
-          if (!match) {
-            match = await Match.create({
-              user1Id: id1,
-              user2Id: id2,
-            });
-            matchCreated = true;
-            matchId = match.id;
-          }
+          [match, matchCreated] = await Match.findOrCreate({
+            where: { user1Id: id1, user2Id: id2 },
+          }).then(([m, created]) => [m, created]);
         }
+      }
+
+      if (match) {
+        const me = await User.findByPk(userId);
+        const otherUser = await User.findByPk(targetUserId);
+
+        const payloadForTarget = {
+          matchId: match.id,
+          name: me.name,
+          photoUrl: me.photoUrl,
+        };
+        const payloadForMe = {
+          matchId: match.id,
+          name: otherUser.name,
+          photoUrl: otherUser.photoUrl,
+        };
+
+        const notifTarget = await Notification.create({
+          userId: targetUserId,
+          type: "match",
+          payload: payloadForTarget,
+        });
+        const notifMe = await Notification.create({
+          userId: userId,
+          type: "match",
+          payload: payloadForMe,
+        });
+
+        await redisPubSub.publish(NOTIF_TOPIC, {
+          notificationAdded: notifTarget.toJSON(),
+        });
+        await redisPubSub.publish(NOTIF_TOPIC, {
+          notificationAdded: notifMe.toJSON(),
+        });
       }
 
       const matchedUser = matchCreated
         ? await User.findByPk(targetUserId)
         : null;
 
-      return { matchCreated, matchedUser, matchId };
+      return {
+        matchCreated,
+        matchedUser,
+        matchId: match ? match.id : null,
+      };
     },
   },
 };

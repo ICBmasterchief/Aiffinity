@@ -2,26 +2,28 @@
 import UserChatMessage from "../../models/UserChatMessage.js";
 import redisPubSub from "../../redisPubSub.js";
 import { withFilter } from "graphql-subscriptions";
+import Notification from "../../models/Notification.js";
+import Match from "../../models/Match.js";
 
 const CONVERSATION_MESSAGE_ADDED = "CONVERSATION_MESSAGE_ADDED";
+const NOTIF_TOPIC = "NOTIFICATION_ADDED";
 
 const chatConversationResolvers = {
   Query: {
-    getConversationMessages: async (_, { matchId }, context) => {
-      if (!context.user) throw new Error("No autorizado");
-      const messages = await UserChatMessage.findAll({
+    getConversationMessages: async (_, { matchId }, { user }) => {
+      if (!user) throw new Error("No autorizado");
+      return await UserChatMessage.findAll({
         where: { conversationId: matchId },
         order: [["createdAt", "ASC"]],
       });
-      return messages;
     },
   },
   Mutation: {
-    sendConversationMessage: async (_, { matchId, content }, context) => {
-      if (!context.user) throw new Error("No autorizado");
+    sendConversationMessage: async (_, { matchId, content }, { user }) => {
+      if (!user) throw new Error("No autorizado");
       const newMessageInstance = await UserChatMessage.create({
         conversationId: matchId,
-        senderId: context.user.userId,
+        senderId: user.userId,
         content,
       });
       if (!newMessageInstance) throw new Error("Error al crear el mensaje");
@@ -31,18 +33,27 @@ const chatConversationResolvers = {
       await redisPubSub.publish(CONVERSATION_MESSAGE_ADDED, {
         conversationMessageAdded: newMessage,
       });
+
+      const { user1Id, user2Id } = await Match.findByPk(matchId);
+      const receiverId = user.userId === user1Id ? user2Id : user1Id;
+
+      const notif = await Notification.create({
+        userId: receiverId,
+        type: "message",
+        payload: { matchId },
+      });
+
+      await redisPubSub.publish(NOTIF_TOPIC, {
+        notificationAdded: notif.toJSON(),
+      });
+
       return newMessage;
     },
   },
   Subscription: {
     conversationMessageAdded: {
       subscribe: withFilter(
-        () => {
-          const asyncIter = redisPubSub.asyncIterator(
-            CONVERSATION_MESSAGE_ADDED
-          );
-          return asyncIter;
-        },
+        () => redisPubSub.asyncIterator(CONVERSATION_MESSAGE_ADDED),
         (payload, variables) => {
           if (!payload || !payload.conversationMessageAdded) return false;
 
@@ -53,10 +64,7 @@ const chatConversationResolvers = {
           return pubConversationId === varMatchId;
         }
       ),
-
-      resolve: (payload) => {
-        return payload.conversationMessageAdded;
-      },
+      resolve: (payload) => payload.conversationMessageAdded,
     },
   },
 };

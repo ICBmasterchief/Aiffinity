@@ -5,8 +5,11 @@ import swipeResolvers from "./swipe.js";
 import matchResolvers from "./match.js";
 import chatConversationResolvers from "./chatConversation.js";
 import notificationResolvers from "./notification.js";
+import userPhotoResolvers from "./userPhoto.js";
 
 const resolvers = {
+  Upload: userPhotoResolvers.Upload,
+
   Query: {
     ...userResolvers.Query,
     ...openaiResolvers.Query,
@@ -22,10 +25,14 @@ const resolvers = {
     ...matchResolvers.Mutation,
     ...chatConversationResolvers.Mutation,
     ...notificationResolvers.Mutation,
+    ...userPhotoResolvers.Mutation,
   },
   Subscription: {
     ...chatConversationResolvers.Subscription,
     ...notificationResolvers.Subscription,
+  },
+  User: {
+    ...userPhotoResolvers.User,
   },
 };
 

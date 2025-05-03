@@ -3,8 +3,10 @@ import "dotenv/config";
 import http from "http";
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 import jwt from "jsonwebtoken";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
@@ -31,7 +33,7 @@ const buildContext = (source) => {
       console.warn("Token inválido o expirado");
     }
   }
-  return { user };
+  return { user, req: source };
 };
 
 (async () => {
@@ -40,6 +42,10 @@ const buildContext = (source) => {
 
   const app = express();
   app.use(cors());
+
+  app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 10 }));
+
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 

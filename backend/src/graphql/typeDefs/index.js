@@ -6,6 +6,7 @@ import swipeTypeDefs from "./swipe.js";
 import matchTypeDefs from "./match.js";
 import chatConversationTypeDefs from "./chatConversation.js";
 import notificationTypeDefs from "./notification.js";
+import userPhotoTypeDefs from "./userPhoto.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -29,4 +30,5 @@ export default [
   matchTypeDefs,
   chatConversationTypeDefs,
   notificationTypeDefs,
+  userPhotoTypeDefs,
 ];

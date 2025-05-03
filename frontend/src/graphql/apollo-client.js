@@ -1,5 +1,6 @@
 // frontend/src/graphql/apollo-client.js
-import { ApolloClient, InMemoryCache, HttpLink, split } from "@apollo/client";
+import { ApolloClient, InMemoryCache, split } from "@apollo/client";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { getMainDefinition } from "@apollo/client/utilities";
@@ -48,7 +49,7 @@ export let wsClient = makeWsClient();
 let wsLink = new GraphQLWsLink(wsClient);
 
 function buildSplit() {
-  const httpLink = new HttpLink({ uri: HTTP_URI });
+  const httpLink = createUploadLink({ uri: HTTP_URI });
   return split(
     ({ query }) => {
       const def = getMainDefinition(query);

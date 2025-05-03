@@ -13,6 +13,11 @@ export const GET_USERS = gql`
       gender
       searchGender
       photoUrl
+      photos {
+        id
+        filePath
+        position
+      }
     }
   }
 `;
@@ -28,6 +33,11 @@ export const GET_USER = gql`
       gender
       searchGender
       photoUrl
+      photos {
+        id
+        filePath
+        position
+      }
     }
   }
 `;

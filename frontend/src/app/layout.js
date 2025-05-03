@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <Header />
-          {children}
+          <main className="px-3 sm:px-6 mx-auto">{children}</main>
           <MatchNotifier />
         </Providers>
       </body>

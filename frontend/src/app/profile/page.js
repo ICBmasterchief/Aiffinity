@@ -7,6 +7,7 @@ import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { GET_USER } from "@/graphql/userQueries";
 import { UPDATE_PROFILE } from "@/graphql/userMutations";
+import PhotoGrid from "@/components/PhotoGrid";
 
 function ProfilePage() {
   const { user } = useContext(AuthContext);
@@ -18,7 +19,7 @@ function ProfilePage() {
     photoUrl: "",
   });
 
-  const { data, loading, error } = useQuery(GET_USER, {
+  const { data, loading, error, refetch } = useQuery(GET_USER, {
     variables: { id: user?.userId },
     fetchPolicy: "network-only",
     skip: !user,
@@ -27,6 +28,7 @@ function ProfilePage() {
   const [updateProfile, { loading: updating }] = useMutation(UPDATE_PROFILE, {
     onCompleted: (data) => {
       alert("Perfil actualizado!");
+      refetch();
     },
     onError: (err) => {
       console.error("Error actualizando perfil:", err);
@@ -64,7 +66,10 @@ function ProfilePage() {
   return (
     <div className="max-w-md mx-auto mt-8">
       <h1 className="text-2xl font-bold mb-4">Tu Perfil</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+
+      <PhotoGrid photos={data.getUser.photos} refetchProfile={refetch} />
+
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4 mt-6">
         <label>
           Descripción:
           <textarea
@@ -103,7 +108,7 @@ function ProfilePage() {
         <label>
           Busco:
           <select
-            value={formData.searchGender || ""}
+            value={formData.searchGender}
             onChange={(e) =>
               setFormData({ ...formData, searchGender: e.target.value })
             }
@@ -127,12 +132,13 @@ function ProfilePage() {
             }
           />
         </label>
+        ;
         <button
           type="submit"
           disabled={updating}
           className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          {updating ? "Actualizando..." : "Guardar Perfil"}
+          {updating ? "Actualizando…" : "Guardar Perfil"}
         </button>
       </form>
     </div>

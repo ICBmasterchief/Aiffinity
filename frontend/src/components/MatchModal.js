@@ -1,6 +1,8 @@
 // frontend/src/components/MatchModal.js
 "use client";
 
+import { photoUrl } from "@/utils/photoUrl";
+
 export default function MatchModal({ matchedUser, onClose, onChat }) {
   if (!matchedUser) return null;
 
@@ -10,13 +12,11 @@ export default function MatchModal({ matchedUser, onClose, onChat }) {
         <h2 className="text-xl font-bold mb-4">
           ¡Has hecho match con {matchedUser.name}!
         </h2>
-        {matchedUser.photoUrl && (
-          <img
-            src={matchedUser.photoUrl}
-            alt={matchedUser.name}
-            className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
-          />
-        )}
+        <img
+          src={photoUrl(matchedUser.mainPhoto)}
+          alt={matchedUser.name}
+          className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
+        />
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}

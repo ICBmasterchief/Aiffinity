@@ -16,7 +16,6 @@ function ProfilePage() {
     age: 0,
     gender: "",
     searchGender: "",
-    photoUrl: "",
   });
 
   const { data, loading, error, refetch } = useQuery(GET_USER, {
@@ -42,7 +41,6 @@ function ProfilePage() {
         age: data.getUser.age || 0,
         gender: data.getUser.gender || "",
         searchGender: data.getUser.searchGender || "",
-        photoUrl: data.getUser.photoUrl || "",
       });
     }
   }, [data]);
@@ -55,7 +53,6 @@ function ProfilePage() {
         age: parseInt(formData.age),
         gender: formData.gender,
         searchGender: formData.searchGender,
-        photoUrl: formData.photoUrl,
       },
     });
   };
@@ -121,18 +118,6 @@ function ProfilePage() {
             <option value="ambos">Ambos</option>
           </select>
         </label>
-        <label>
-          Foto (URL):
-          <input
-            type="text"
-            className="border rounded w-full p-2 text-black"
-            value={formData.photoUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, photoUrl: e.target.value })
-            }
-          />
-        </label>
-        ;
         <button
           type="submit"
           disabled={updating}

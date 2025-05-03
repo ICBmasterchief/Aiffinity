@@ -34,10 +34,6 @@ const User = sequelize.define("User", {
     type: DataTypes.ENUM("hombres", "mujeres", "ambos"),
     allowNull: true,
   },
-  photoUrl: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   description: {
     type: DataTypes.STRING,
     allowNull: true,

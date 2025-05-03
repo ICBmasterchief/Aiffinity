@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_RANDOM_USER, LIKE_USER } from "@/graphql/swipeQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useRouter } from "next/navigation";
+import { photoUrl } from "@/utils/photoUrl";
 
 function DiscoverPage() {
   const router = useRouter();
@@ -29,13 +30,11 @@ function DiscoverPage() {
       {candidate && (
         <div key={candidate.id} className="border p-4 mb-4 rounded">
           <p className="font-bold">{candidate.name}</p>
-          {candidate.photoUrl && (
-            <img
-              src={candidate.photoUrl}
-              alt={candidate.name}
-              className="max-h-64 mb-2"
-            />
-          )}
+          <img
+            src={photoUrl(candidate.mainPhoto)}
+            alt={candidate.name}
+            className="max-h-64 mb-2"
+          />
           <div className="flex space-x-4 mt-2">
             <button
               onClick={() =>

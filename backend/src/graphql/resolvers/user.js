@@ -44,7 +44,7 @@ const userResolvers = {
     },
     updateProfile: async (
       _,
-      { description, age, gender, searchGender, photoUrl },
+      { description, age, gender, searchGender },
       context
     ) => {
       if (!context.user) {
@@ -59,7 +59,6 @@ const userResolvers = {
       user.age = age;
       user.gender = gender;
       user.searchGender = searchGender;
-      if (photoUrl !== undefined) user.photoUrl = photoUrl;
 
       await user.save();
       return user;

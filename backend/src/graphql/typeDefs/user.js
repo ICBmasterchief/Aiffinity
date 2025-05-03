@@ -10,7 +10,8 @@ const userTypeDefs = gql`
     age: Int
     gender: String
     searchGender: String
-    photoUrl: String
+    mainPhoto: String
+    photos: [Photo!]!
   }
 
   extend type Query {
@@ -26,7 +27,6 @@ const userTypeDefs = gql`
       age: Int
       gender: String
       searchGender: String
-      photoUrl: String
     ): User!
   }
 `;

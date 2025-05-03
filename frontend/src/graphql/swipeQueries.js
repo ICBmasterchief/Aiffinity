@@ -9,7 +9,12 @@ export const GET_RANDOM_USER = gql`
       description
       gender
       searchGender
-      photoUrl
+      mainPhoto
+      photos {
+        id
+        filePath
+        position
+      }
     }
   }
 `;
@@ -21,7 +26,7 @@ export const LIKE_USER = gql`
       matchedUser {
         id
         name
-        photoUrl
+        mainPhoto
       }
       matchId
     }

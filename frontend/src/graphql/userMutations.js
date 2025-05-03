@@ -24,21 +24,18 @@ export const UPDATE_PROFILE = gql`
     $age: Int
     $gender: String
     $searchGender: String
-    $photoUrl: String
   ) {
     updateProfile(
       description: $description
       age: $age
       gender: $gender
       searchGender: $searchGender
-      photoUrl: $photoUrl
     ) {
       id
       description
       age
       gender
       searchGender
-      photoUrl
     }
   }
 `;

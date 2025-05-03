@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import sequelize from "../../config/database.js";
 import Notification from "../../models/Notification.js";
 import redisPubSub from "../../redisPubSub.js";
+import UserPhoto from "../../models/UserPhoto.js";
 
 const NOTIF_TOPIC = "NOTIFICATION_ADDED";
 
@@ -103,15 +104,23 @@ const swipeResolvers = {
         const me = await User.findByPk(userId);
         const otherUser = await User.findByPk(targetUserId);
 
+        const mainOf = async (uid) =>
+          (
+            await UserPhoto.findOne({
+              where: { userId: uid },
+              order: [["position", "ASC"]],
+            })
+          )?.filePath;
+
         const payloadForTarget = {
           matchId: match.id,
           name: me.name,
-          photoUrl: me.photoUrl,
+          photo: await mainOf(userId),
         };
         const payloadForMe = {
           matchId: match.id,
           name: otherUser.name,
-          photoUrl: otherUser.photoUrl,
+          photo: await mainOf(targetUserId),
         };
 
         const notifTarget = await Notification.create({

@@ -34,10 +34,10 @@ export default function MatchNotifier() {
 
   if (!notif) return null;
 
-  const { name, photoUrl } = notif.payload;
+  const { name, mainPhoto } = notif.payload;
   return (
     <MatchModal
-      matchedUser={{ name, photoUrl }}
+      matchedUser={{ name, mainPhoto }}
       onClose={handleClose}
       onChat={handleChat}
     />

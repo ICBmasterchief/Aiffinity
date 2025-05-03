@@ -8,6 +8,7 @@ import { MARK_NOTIFS_READ } from "@/graphql/notificationQueries";
 import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useNotifs } from "@/context/NotificationsContext";
+import { photoUrl } from "@/utils/photoUrl";
 
 function MatchesPage() {
   const {
@@ -61,13 +62,11 @@ function MatchesPage() {
                 key={m.id}
                 className="border p-4 rounded flex items-center space-x-4"
               >
-                {m.user.photoUrl && (
-                  <img
-                    src={m.user.photoUrl}
-                    alt={m.user.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                )}
+                <img
+                  src={photoUrl(m.user.mainPhoto)}
+                  alt={m.user.name}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
 
                 <div className="flex-1 flex items-center">
                   <span className="font-semibold">{m.user.name}</span>

@@ -1,15 +1,15 @@
 // frontend/src/utils/photoUrl.js
-export function photoUrl(path) {
+export function photoUrl(path = "") {
+  if (!path) return "/default.jpg";
+
   if (path.startsWith("http")) {
     try {
       const { pathname } = new URL(path);
-      return window.location.origin + pathname;
+      return pathname;
     } catch {
       return path;
     }
   }
-  
-  const clean = path.startsWith("/") ? path : `/${path}`;
-  return window.location.origin + clean;
-}
 
+  return path.startsWith("/") ? path : `/${path}`;
+}

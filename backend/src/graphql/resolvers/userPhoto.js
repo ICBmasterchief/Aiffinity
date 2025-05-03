@@ -118,6 +118,14 @@ const userPhotoResolvers = {
   },
 
   User: {
+    async mainPhoto(parent) {
+      const first = await UserPhoto.findOne({
+        where: { userId: parent.id },
+        order: [["position", "ASC"]],
+      });
+      return first ? first.filePath : "/default.jpg";
+    },
+
     photos: (parent) =>
       UserPhoto.findAll({
         where: { userId: parent.id },

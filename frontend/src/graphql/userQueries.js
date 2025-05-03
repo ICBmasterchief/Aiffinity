@@ -12,7 +12,7 @@ export const GET_USERS = gql`
       age
       gender
       searchGender
-      photoUrl
+      mainPhoto
       photos {
         id
         filePath
@@ -32,7 +32,7 @@ export const GET_USER = gql`
       age
       gender
       searchGender
-      photoUrl
+      mainPhoto
       photos {
         id
         filePath

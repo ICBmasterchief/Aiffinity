@@ -8,7 +8,7 @@ export const GET_MATCHES = gql`
       user {
         id
         name
-        photoUrl
+        mainPhoto
       }
     }
   }
@@ -21,7 +21,7 @@ export const GET_MATCH_INFO = gql`
       user {
         id
         name
-        photoUrl
+        mainPhoto
       }
     }
   }

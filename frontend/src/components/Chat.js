@@ -9,9 +9,11 @@ import {
   CONVERSATION_MESSAGE_SUBSCRIPTION,
 } from "@/graphql/chatConversationQueries";
 import { AuthContext } from "@/context/AuthContext";
+import { useNotifs } from "@/context/NotificationsContext";
 
 export default function Chat({ matchId, chatPartner }) {
   const { user } = useContext(AuthContext);
+  const { clearChatNotifications } = useNotifs();
 
   const {
     data,
@@ -48,7 +50,15 @@ export default function Chat({ matchId, chatPartner }) {
         ...prev,
         subscriptionData.conversationMessageAdded,
       ]);
+
+      if (
+        String(subscriptionData.conversationMessageAdded.senderId) !==
+        String(user?.userId)
+      ) {
+        clearChatNotifications(matchId);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subscriptionData]);
 
   useEffect(() => {
@@ -63,6 +73,10 @@ export default function Chat({ matchId, chatPartner }) {
         chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    clearChatNotifications(matchId);
+  }, [matchId, clearChatNotifications]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();

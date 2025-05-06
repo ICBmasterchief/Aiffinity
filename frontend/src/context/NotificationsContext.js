@@ -1,7 +1,13 @@
 // frontend/src/context/NotificationsContext.js
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { useQuery, useSubscription, useMutation } from "@apollo/client";
 import {
   GET_NOTIFS,
@@ -56,23 +62,26 @@ export function NotifProvider({ children }) {
     }
   }, [user, refetch]);
 
-  const clearNotifications = async () => {
+  const clearNotifications = useCallback(async () => {
     await markRead({ variables: { matchId: null } });
     setNotifs((prev) =>
       prev.map((n) => (n.type === "match" ? { ...n, cleared: true } : n))
     );
-  };
+  }, [markRead]);
 
-  const clearChatNotifications = async (matchId) => {
-    await markRead({ variables: { matchId } });
-    setNotifs((prev) =>
-      prev.filter(
-        (n) => !(n.type === "message" && n.payload.matchId === matchId)
-      )
-    );
-  };
+  const clearChatNotifications = useCallback(
+    async (matchId) => {
+      await markRead({ variables: { matchId } });
+      setNotifs((prev) =>
+        prev.filter(
+          (n) => !(n.type === "message" && n.payload.matchId === matchId)
+        )
+      );
+    },
+    [markRead]
+  );
 
-  const clearMatchBadge = (matchId) => {
+  const clearMatchBadge = useCallback((matchId) => {
     setNotifs((prev) =>
       prev.map((n) =>
         n.type === "match" && String(n.payload.matchId) === String(matchId)
@@ -80,7 +89,7 @@ export function NotifProvider({ children }) {
           : n
       )
     );
-  };
+  }, []);
 
   return (
     <NotifContext.Provider

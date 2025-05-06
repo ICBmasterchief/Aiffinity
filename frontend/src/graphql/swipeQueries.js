@@ -6,6 +6,7 @@ export const GET_RANDOM_USER = gql`
     getRandomUser {
       id
       name
+      age
       description
       gender
       searchGender

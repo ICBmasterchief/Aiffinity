@@ -27,7 +27,7 @@ services:
     image: redis:7-alpine
     restart: always
     ports:
-      - "6379:6379"
+      - "6679:6379"
     networks: [aiffinity_network]
 
   # backend:

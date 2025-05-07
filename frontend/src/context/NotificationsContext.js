@@ -43,6 +43,15 @@ export function NotifProvider({ children }) {
   useEffect(() => {
     const n = subData?.notificationAdded;
     if (!n) return;
+
+    if (
+      n.type === "message" &&
+      typeof window !== "undefined" &&
+      window.location.pathname === `/chat/${n.payload.matchId}`
+    ) {
+      return;
+    }
+
     setNotifs((prev) => {
       if (n.type === "message") {
         const exists = prev.some(

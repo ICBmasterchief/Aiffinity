@@ -8,13 +8,23 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 export default function UserCarousel({ photos = [], onPhotoClick }) {
   const [active, setActive] = useState(0);
+  const [isSwipingPhoto, setIsSwipingPhoto] = useState(false);
 
   const size = photos.length || 1;
   const go = (dir) => setActive((i) => (i + dir + size) % size);
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => go(1),
-    onSwipedRight: () => go(-1),
+    onSwiping: ({ deltaX }) => {
+      if (Math.abs(deltaX) > 5) setIsSwipingPhoto(true);
+    },
+    onSwipedLeft: () => {
+      go(1);
+      setIsSwipingPhoto(false);
+    },
+    onSwipedRight: () => {
+      go(-1);
+      setIsSwipingPhoto(false);
+    },
     preventScrollOnSwipe: true,
     trackMouse: true,
   });
@@ -23,9 +33,6 @@ export default function UserCarousel({ photos = [], onPhotoClick }) {
     <div
       {...handlers}
       className="relative w-full h-full aspect-[4/5] cursor-grab active:cursor-grabbing"
-      onPointerDown={(e) => e.stopPropagation()}
-      onMouseDown={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
     >
       {photos.map((p, idx) => {
         const offset = ((idx - active + size) % size) - 1;
@@ -44,7 +51,14 @@ export default function UserCarousel({ photos = [], onPhotoClick }) {
             src={photoUrl(p.filePath)}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
-            onClick={idx === active ? () => onPhotoClick?.(p, idx) : undefined}
+            onClick={
+              idx === active
+                ? () => {
+                    if (isSwipingPhoto) return;
+                    onPhotoClick?.(p, idx);
+                  }
+                : undefined
+            }
             className={`absolute inset-0 w-full h-full transition-all duration-300 object-cover rounded-xl shadow-lg ${scale} ${rotate}`}
             style={{ zIndex: z }}
             alt=""

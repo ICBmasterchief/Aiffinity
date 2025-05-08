@@ -13,6 +13,9 @@ function DiscoverPage() {
   const candidate = data?.getRandomUser;
 
   const [likeUser] = useMutation(LIKE_USER, {
+    onCompleted: () => {
+      refetch();
+    },
     onError: (error) => console.error(error),
   });
 

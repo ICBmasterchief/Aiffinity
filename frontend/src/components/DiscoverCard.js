@@ -18,6 +18,7 @@ const DURATION = 0.35;
 export default function DiscoverCard({ user, onLike, onAnimEnd }) {
   const [modalPhoto, setModalPhoto] = useState(false);
   const [allowCardDrag, setAllowCardDrag] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
 
   const controls = useAnimation();
   const dragX = useMotionValue(0);
@@ -59,6 +60,7 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
         style={{ x: dragX, rotate: dragRotation }}
         transition={{ duration: DURATION }}
         drag="x"
+        onDragStart={() => setIsDragging(true)}
         dragListener={allowCardDrag}
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={(_, info) => {
@@ -66,6 +68,7 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
           else if (info.offset.x < -120) swipe(-1);
           else
             controls.start({ x: 0, rotate: 0, transition: { duration: 0.2 } });
+          setTimeout(() => setIsDragging(false), 0);
         }}
         animate={controls}
         className="relative -mt-10 w-full max-w-[32rem] aspect-[4/5] bg-[#d6b6ff]/40
@@ -81,7 +84,9 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
         >
           <UserCarousel
             photos={images}
-            onPhotoClick={(photo) => setModalPhoto(photo)}
+            onPhotoClick={(photo) => {
+              if (!isDragging) setModalPhoto(photo);
+            }}
           />
         </div>
 

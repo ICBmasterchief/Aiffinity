@@ -34,7 +34,6 @@ function DiscoverPage() {
                 variables: { targetUserId: candidate.id, liked },
               })
             }
-            onAnimEnd={() => refetch()}
           />
         ) : (
           <p>No hay usuarios disponibles</p>

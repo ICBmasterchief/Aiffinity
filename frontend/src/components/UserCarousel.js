@@ -25,14 +25,14 @@ export default function UserCarousel({ photos = [], onPhotoClick }) {
       go(-1);
       setIsSwipingPhoto(false);
     },
-    preventScrollOnSwipe: true,
+    preventScrollOnSwipe: false,
     trackMouse: true,
   });
 
   return (
     <div
       {...handlers}
-      className="relative w-full h-full aspect-[4/5] cursor-grab active:cursor-grabbing"
+      className="relative w-full h-full aspect-[4/5] cursor-grab active:cursor-grabbing touch-pan-y"
     >
       {photos.map((p, idx) => {
         const offset = ((idx - active + size) % size) - 1;

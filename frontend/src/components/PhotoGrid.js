@@ -24,8 +24,11 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { photoUrl } from "@/utils/photoUrl";
+import PhotoModal from "@/components/PhotoModal";
+import { IoClose } from "react-icons/io5";
+import { FiEdit2, FiCheck } from "react-icons/fi";
 
-function SortableItem({ photo, index, onDelete }) {
+function SortableItem({ photo, index, onDelete, onClickPhoto, editable }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: photo.id });
 
@@ -49,6 +52,7 @@ function SortableItem({ photo, index, onDelete }) {
         draggable={false}
         src={photoUrl(photo.filePath)}
         alt=""
+        onClick={onClickPhoto}
         className={
           isMain
             ? "w-60 h-60 object-cover rounded-lg"
@@ -58,19 +62,31 @@ function SortableItem({ photo, index, onDelete }) {
         {...listeners}
       />
 
-      <button
-        type="button"
-        onClick={() => onDelete(photo.id)}
-        className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-1 text-xs"
-      >
-        ✕
-      </button>
+      {editable && (
+        <button
+          type="button"
+          aria-label="Eliminar foto"
+          onClick={() => onDelete(photo.id)}
+          className="
+            absolute top-1.5 right-1.5 z-10
+            p-[3px] rounded-full
+            bg-white/80 text-gray-700 backdrop-blur-sm
+            ring-1 ring-gray-300 shadow
+            hover:bg-white hover:scale-105 transition
+          "
+        >
+          <IoClose size={14} />
+        </button>
+      )}
     </div>
   );
 }
 
 export default function PhotoGrid({ photos, refetchProfile }) {
   const [items, setItems] = useState(photos ?? []);
+  const [editing, setEditing] = useState(false);
+  const [modalPhoto, setModalPhoto] = useState(null);
+
   useEffect(() => setItems(photos ?? []), [photos]);
 
   const [uploadPhotos] = useMutation(UPLOAD_PHOTOS, {
@@ -84,7 +100,11 @@ export default function PhotoGrid({ photos, refetchProfile }) {
   });
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(TouchSensor, {
       activationConstraint: {
         delay: 250,
@@ -120,32 +140,105 @@ export default function PhotoGrid({ photos, refetchProfile }) {
     <div>
       <label className="block mb-2 font-semibold">Fotos (máx 10):</label>
 
-      <input
-        type="file"
-        accept="image/*"
-        multiple
-        onChange={handleFiles}
-        className="mb-4"
-      />
+      <div className="my-4 flex items-center gap-4 justify-center md:justify-start">
+        <input
+          id="photo-upload-input"
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleFiles}
+          className="hidden"
+        />
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          <div className="grid grid-cols-3 auto-rows-[7rem] gap-2">
-            {items.map((p, idx) => (
-              <SortableItem
-                key={p.id}
-                photo={p}
-                index={idx}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+        <label
+          htmlFor="photo-upload-input"
+          className="
+            inline-block py-2 px-5 
+            bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+            text-white font-medium 
+            rounded-full cursor-pointer
+            hover:from-[#FFD3A5] hover:to-[#FF9A9E] hover:shadow-md
+            transition
+          "
+        >
+          Elegir archivos
+        </label>
+
+        <button
+          type="button"
+          aria-label={editing ? "Terminar edición" : "Editar fotos"}
+          onClick={() => setEditing(!editing)}
+          className="
+            p-2 rounded-full bg-white/80 backdrop-blur
+            ring-1 ring-gray-300 shadow hover:bg-white
+            transition
+          "
+        >
+          {editing ? <FiCheck size={18} /> : <FiEdit2 size={18} />}
+        </button>
+      </div>
+
+      {editing && (
+        <p className="mb-2 text-sm text-gray-600 text-center md:text-left">
+          Arrastra para reordenar o pulsa la ✕ para eliminar.
+        </p>
+      )}
+
+      {editing ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            <div
+              className="grid gap-2 justify-center"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, 7rem)",
+                gridAutoRows: "7rem",
+              }}
+            >
+              {items.map((p, idx) => (
+                <SortableItem
+                  key={p.id}
+                  photo={p}
+                  index={idx}
+                  onDelete={handleDelete}
+                  onClickPhoto={() => setModalPhoto(p)}
+                  editable={editing}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <div
+          className="grid gap-2 justify-center"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, 7rem)",
+            gridAutoRows: "7rem",
+          }}
+        >
+          {items.map((p, idx) => (
+            <img
+              key={p.id}
+              src={photoUrl(p.filePath)}
+              alt=""
+              draggable={false}
+              onClick={() => setModalPhoto(p)}
+              className={
+                idx === 0
+                  ? "w-58 h-58 object-cover rounded-lg col-span-2 row-span-2"
+                  : "w-28 h-28 object-cover rounded"
+              }
+            />
+          ))}
+        </div>
+      )}
+
+      {modalPhoto && (
+        <PhotoModal photo={modalPhoto} onClose={() => setModalPhoto(null)} />
+      )}
     </div>
   );
 }

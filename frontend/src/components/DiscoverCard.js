@@ -71,7 +71,7 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
           setTimeout(() => setIsDragging(false), 0);
         }}
         animate={controls}
-        className="relative -mt-10 w-full max-w-[32rem] aspect-[4/5] bg-[#d6b6ff]/40
+        className="relative -mt-14 mb-2 w-full max-w-[24rem] aspect-[4/5] bg-[#e8d7ff]/60 backdrop-blur-md
                    rounded-3xl shadow-xl flex flex-col p-6 text-center"
       >
         <div
@@ -105,18 +105,20 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
         <div className="sticky bottom-10 left-0 right-0 mt-6 flex justify-center gap-10 pointer-events-auto z-50">
           <motion.button
             style={{ scale: dislikeScale }}
+            whileHover={{ scale: 1.3 }}
             onClick={() => swipe(-1)}
-            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"
+            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
           >
-            <IoClose size={36} className="text-rose-700" />
+            <IoClose size={36} className="text-rose-400" />
           </motion.button>
 
           <motion.button
             style={{ scale: likeScale }}
+            whileHover={{ scale: 1.3 }}
             onClick={() => swipe(1)}
-            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"
+            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
           >
-            <AiFillHeart size={36} className="text-purple-600" />
+            <AiFillHeart size={36} className="text-purple-500" />
           </motion.button>
         </div>
       </motion.div>

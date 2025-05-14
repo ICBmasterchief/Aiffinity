@@ -1,11 +1,30 @@
 /* frontend/src/components/PhotoModal.js */
 "use client";
 import { useLockBodyScroll } from "@/utils/useLockBodyScroll";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export default function PhotoModal({ photo, onClose }) {
   useLockBodyScroll(true);
 
-  return (
+  const portalRef = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const el = document.createElement("div");
+    document.body.appendChild(el);
+    portalRef.current = el;
+    setReady(true);
+
+    return () => {
+      document.body.removeChild(el);
+      portalRef.current = null;
+    };
+  }, []);
+
+  if (!ready || !portalRef.current) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[120] bg-black/80 flex items-center justify-center cursor-auto"
       onClick={onClose}
@@ -23,6 +42,7 @@ export default function PhotoModal({ photo, onClose }) {
         onClick={onClose}
         className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg shadow-xl"
       />
-    </div>
+    </div>,
+    portalRef.current
   );
 }

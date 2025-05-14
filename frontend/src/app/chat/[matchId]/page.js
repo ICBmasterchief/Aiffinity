@@ -6,6 +6,8 @@ import { useQuery } from "@apollo/client";
 import { GET_MATCH_INFO } from "@/graphql/matchQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Chat from "@/components/Chat";
+import { photoUrl } from "@/utils/photoUrl";
+import { motion } from "framer-motion";
 
 function ChatPage() {
   const { matchId } = useParams();
@@ -20,12 +22,39 @@ function ChatPage() {
   const chatPartner = data?.getMatchInfo?.user;
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        Chat con {chatPartner ? chatPartner.name : "usuario"}
-      </h1>
-      <Chat matchId={matchId} chatPartner={chatPartner} />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="
+            max-w-3xl mx-auto my-8
+            bg-white/60 backdrop-blur-md
+            rounded-3xl shadow-lg
+            flex flex-col h-[calc(100vh-10rem)]
+            overflow-hidden
+          "
+    >
+      <div className="flex items-center gap-3 p-4 border-b border-white/40">
+        {chatPartner?.mainPhoto && (
+          <img
+            src={photoUrl(chatPartner.mainPhoto)}
+            alt={chatPartner.name}
+            className="w-12 h-12 rounded-full object-cover ring-2 ring-white/70"
+          />
+        )}
+        <h1
+          className="
+                text-lg font-bold
+                bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+                bg-clip-text text-transparent
+              "
+        >
+          {`Chat con ${chatPartner ? chatPartner.name : "usuario"}`}
+        </h1>
+      </div>
+      <div className="flex-1 flex flex-col">
+        <Chat matchId={matchId} chatPartner={chatPartner} />
+      </div>
+    </motion.div>
   );
 }
 

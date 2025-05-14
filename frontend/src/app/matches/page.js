@@ -9,6 +9,7 @@ import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useNotifs } from "@/context/NotificationsContext";
 import { photoUrl } from "@/utils/photoUrl";
+import { motion } from "framer-motion";
 
 function MatchesPage() {
   const {
@@ -32,19 +33,23 @@ function MatchesPage() {
   });
   const [markRead] = useMutation(MARK_NOTIFS_READ);
 
-  if (loading) return <p>Cargando matches...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <p className="text-center py-8">Cargando matches...</p>;
+  if (error) return <p className="text-center py-8">Error: {error.message}</p>;
 
   const matches = data?.getMatches || [];
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="max-w-5xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mis Matches</h1>
       {matches.length === 0 ? (
-        <p>No tienes matches.</p>
+        <p className="text-center text-gray-500">No tienes matches.</p>
       ) : (
-        <ul className="space-y-4">
-          {matches.map((m) => {
+        <motion.div
+          className="grid grid-cols-2 max-[450px]:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          initial="hidden"
+          animate="visible"
+        >
+          {matches.map((m, index) => {
             const hasUnreadMsg = notifs.some(
               (n) =>
                 n.type === "message" &&
@@ -56,32 +61,32 @@ function MatchesPage() {
                 !n.seen &&
                 String(n.payload.matchId) === String(m.id)
             );
-
             return (
-              <li
+              <motion.div
                 key={m.id}
-                className="border p-4 rounded flex items-center space-x-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="relative bg-white/60 rounded-xl shadow-sm p-4
+                  flex flex-col justify-between items-center text-center
+                  hover:shadow-md transition-shadow h-full
+                "
               >
-                <img
-                  src={photoUrl(m.user.mainPhoto)}
-                  alt={m.user.name}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-
-                <div className="flex-1 flex items-center">
-                  <span className="font-semibold">{m.user.name}</span>
-
+                <div className="flex flex-col items-center">
                   {isNewMatch && (
-                    <span className="ml-2 px-1.5 py-0.5 text-xs rounded bg-green-500 text-white">
+                    <span className="absolute top-2 left-2 px-1 py-0.5 bg-green-500 text-white text-xs font-semibold rounded">
                       NUEVO
                     </span>
                   )}
-
-                  {hasUnreadMsg && (
-                    <span className="ml-2 w-2 h-2 rounded-full bg-red-500"></span>
-                  )}
+                  <img
+                    src={photoUrl(m.user.mainPhoto)}
+                    alt={m.user.name}
+                    className="w-20 h-20 rounded-full object-cover ring-2 ring-violet-200"
+                  />
+                  <h2 className="mt-2 text-lg font-medium leading-snug">
+                    {m.user.name}
+                  </h2>
                 </div>
-
                 <Link
                   href={`/chat/${m.id}`}
                   onClick={() => {
@@ -89,15 +94,34 @@ function MatchesPage() {
                     clearChatNotifications(m.id);
                     clearMatchBadge(m.id);
                   }}
+                  className="relative"
                 >
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded">
+                  <button
+                    className="
+                      mt-2 px-4 py-1 w-full 
+                      bg-gradient-to-r from-[#B89CFF] to-[#CBA4FF] 
+                    text-white text-sm font-medium rounded-full 
+                    hover:from-[#CBA4FF] hover:to-[#B89CFF] 
+                      hover:shadow-md hover:scale-105 transition 
+                    "
+                  >
                     Chatear
                   </button>
+                  {hasUnreadMsg && (
+                    <span
+                      className="
+                        absolute top-1/2 -translate-y-1/2
+                        -right-2
+                        w-2 h-2 -mx-1 mt-1 bg-red-500 rounded-full
+                        pointer-events-none
+                      "
+                    />
+                  )}
                 </Link>
-              </li>
+              </motion.div>
             );
           })}
-        </ul>
+        </motion.div>
       )}
     </div>
   );

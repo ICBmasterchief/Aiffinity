@@ -3,6 +3,7 @@
 import { useLockBodyScroll } from "@/utils/useLockBodyScroll";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { photoUrl } from "@/utils/photoUrl";
 
 export default function PhotoModal({ photo, onClose }) {
   useLockBodyScroll(true);
@@ -37,7 +38,9 @@ export default function PhotoModal({ photo, onClose }) {
       </button>
 
       <img
-        src={photo.filePath ?? photo}
+        src={
+          typeof photo === "string" ? photoUrl(photo) : photoUrl(photo.filePath)
+        }
         alt=""
         onClick={onClose}
         className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg shadow-xl"

@@ -78,11 +78,24 @@ function MatchesPage() {
                       NUEVO
                     </span>
                   )}
-                  <img
-                    src={photoUrl(m.user.mainPhoto)}
-                    alt={m.user.name}
-                    className="w-20 h-20 rounded-full object-cover ring-2 ring-violet-200"
-                  />
+                  <Link
+                    href={`/user/${m.user.id}`}
+                    scroll={false}
+                    className="relative group"
+                  >
+                    <img
+                      src={photoUrl(m.user.mainPhoto)}
+                      alt={m.user.name}
+                      className="w-20 h-20 rounded-full object-cover ring-2 ring-violet-200 transition duration-200 group-hover:brightness-75"
+                    />
+                    <span
+                      className="absolute inset-0 flex items-center justify-center
+                      text-white text-sm font-semibold
+                        opacity-0 group-hover:opacity-100 transition"
+                    >
+                      Ver perfil
+                    </span>
+                  </Link>
                   <h2 className="mt-2 text-lg font-medium leading-snug">
                     {m.user.name}
                   </h2>

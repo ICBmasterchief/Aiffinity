@@ -27,6 +27,7 @@ import { photoUrl } from "@/utils/photoUrl";
 import PhotoModal from "@/components/PhotoModal";
 import { IoClose } from "react-icons/io5";
 import { FiEdit2, FiCheck } from "react-icons/fi";
+import Toast from "@/components/Toats";
 
 function SortableItem({ photo, index, onDelete, onClickPhoto, editable }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -86,6 +87,7 @@ export default function PhotoGrid({ photos, refetchProfile }) {
   const [items, setItems] = useState(photos ?? []);
   const [editing, setEditing] = useState(false);
   const [modalPhoto, setModalPhoto] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => setItems(photos ?? []), [photos]);
 
@@ -116,7 +118,12 @@ export default function PhotoGrid({ photos, refetchProfile }) {
   const handleFiles = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
-    await uploadPhotos({ variables: { files } });
+    try {
+      await uploadPhotos({ variables: { files } });
+    } catch (err) {
+      const gqlMsg = err?.graphQLErrors?.[0]?.message;
+      setErrorMsg(gqlMsg || "Error subiendo foto");
+    }
     e.target.value = "";
   };
 
@@ -235,6 +242,12 @@ export default function PhotoGrid({ photos, refetchProfile }) {
           ))}
         </div>
       )}
+
+      <Toast
+        open={Boolean(errorMsg)}
+        message={errorMsg}
+        onClose={() => setErrorMsg("")}
+      />
 
       {modalPhoto && (
         <PhotoModal photo={modalPhoto} onClose={() => setModalPhoto(null)} />

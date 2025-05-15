@@ -5,6 +5,8 @@ import path from "path";
 import UserPhoto from "../../models/UserPhoto.js";
 import crypto from "crypto";
 import sequelize from "../../config/database.js";
+import { Op } from "sequelize";
+import { GraphQLError } from "graphql";
 
 const ALLOWED = {
   "image/jpeg": ".jpg",
@@ -16,7 +18,9 @@ const ALLOWED = {
 const saveFile = async (createReadStream, userId, mimetype) => {
   const extFromMime = ALLOWED[mimetype];
   if (!extFromMime) {
-    throw new Error(`Tipo de archivo no permitido: ${mimetype}`);
+    throw new GraphQLError("Tipo de archivo no permitido", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
   }
 
   const dir = path.join("uploads", String(userId));
@@ -43,19 +47,25 @@ const userPhotoResolvers = {
   Upload: GraphQLUpload,
 
   Mutation: {
-    uploadUserPhotos: async (_, { files }, { user, req }) => {
+    uploadUserPhotos: async (_, { files }, { user }) => {
       if (!user) throw new Error("Unauthorized");
 
-      const existing = await UserPhoto.count({
+      const existingCount = await UserPhoto.count({
         where: { userId: user.userId },
       });
-      if (existing + files.length > 10) throw new Error("Máximo 10 fotos");
+      if (existingCount + files.length > 10)
+        throw new GraphQLError("Máximo 10 fotos", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
+
+      const existingMax = await UserPhoto.max("position", {
+        where: { userId: user.userId },
+      });
+      const startPos = Number.isFinite(existingMax) ? existingMax + 1 : 0;
 
       const saved = [];
       for (const filePromise of files) {
         const { createReadStream, mimetype } = await filePromise;
-        console.log("createReadStream: ", createReadStream);
-        console.log("mimetype: ", mimetype);
         const filePath = await saveFile(
           createReadStream,
           user.userId,
@@ -65,7 +75,7 @@ const userPhotoResolvers = {
         const photo = await UserPhoto.create({
           userId: user.userId,
           filePath,
-          position: existing + saved.length,
+          position: startPos + saved.length,
         });
         saved.push(photo);
       }
@@ -76,7 +86,18 @@ const userPhotoResolvers = {
       const photo = await UserPhoto.findByPk(photoId);
       if (!photo || photo.userId !== user.userId)
         throw new Error("No permitido");
+      const deletedPos = photo.position;
       await photo.destroy();
+
+      await UserPhoto.increment(
+        { position: -1 },
+        {
+          where: {
+            userId: user.userId,
+            position: { [Op.gt]: deletedPos },
+          },
+        }
+      );
       return true;
     },
 

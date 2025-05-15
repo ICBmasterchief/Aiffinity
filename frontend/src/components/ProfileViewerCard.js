@@ -1,4 +1,4 @@
-// frontend/src/components/DiscoverCard.js
+// frontend/src/components/ProfileViewerCard.js
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,7 +15,12 @@ import {
 
 const DURATION = 0.35;
 
-export default function DiscoverCard({ user, onLike, onAnimEnd }) {
+export default function ProfileViewerCard({
+  user,
+  onLike,
+  onAnimEnd,
+  interactive = true,
+}) {
   const [modalPhoto, setModalPhoto] = useState(false);
   const [allowCardDrag, setAllowCardDrag] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
@@ -59,23 +64,31 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
       <motion.div
         style={{ x: dragX, rotate: dragRotation }}
         transition={{ duration: DURATION }}
-        drag="x"
+        drag={interactive ? "x" : false}
         onDragStart={() => setIsDragging(true)}
         dragListener={allowCardDrag}
         dragConstraints={{ left: 0, right: 0 }}
-        onDragEnd={(_, info) => {
-          if (info.offset.x > 120) swipe(1);
-          else if (info.offset.x < -120) swipe(-1);
-          else
-            controls.start({ x: 0, rotate: 0, transition: { duration: 0.2 } });
-          setTimeout(() => setIsDragging(false), 0);
-        }}
+        onDragEnd={
+          !interactive
+            ? undefined
+            : (_, info) => {
+                if (info.offset.x > 120) swipe(1);
+                else if (info.offset.x < -120) swipe(-1);
+                else
+                  controls.start({
+                    x: 0,
+                    rotate: 0,
+                    transition: { duration: 0.2 },
+                  });
+                setTimeout(() => setIsDragging(false), 0);
+              }
+        }
         animate={controls}
-        className="relative -mt-14 mb-2 w-full max-w-[24rem] aspect-[4/5] bg-[#e8d7ff]/60 backdrop-blur-md
+        className="relative -mt-14 mb-2 w-full max-w-[32rem] aspect-[4/5] bg-[#e8d7ff]/60 backdrop-blur-md
                    rounded-3xl shadow-xl flex flex-col p-6 text-center"
       >
         <div
-          className="flex-1"
+          className="flex-2"
           onPointerDownCapture={() => {
             setAllowCardDrag(!hasMultiple ? true : false);
           }}
@@ -96,31 +109,33 @@ export default function DiscoverCard({ user, onLike, onAnimEnd }) {
 
         <div className="flex flex-wrap justify-center gap-2 mt-3">
           {user.description && (
-            <p className="bg-white/60 backdrop-blur px-3 py-1 rounded-3xl text-sm">
+            <p className="bg-white/60 backdrop-blur px-3 py-1 rounded-3xl text-base">
               {user.description.trim()}
             </p>
           )}
         </div>
 
-        <div className="sticky bottom-10 left-0 right-0 mt-6 flex justify-center gap-10 pointer-events-auto z-50">
-          <motion.button
-            style={{ scale: dislikeScale }}
-            whileHover={{ scale: 1.3 }}
-            onClick={() => swipe(-1)}
-            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
-          >
-            <IoClose size={36} className="text-rose-400" />
-          </motion.button>
+        {interactive && (
+          <div className="sticky bottom-10 left-0 right-0 mt-6 flex justify-center gap-10 pointer-events-auto z-50">
+            <motion.button
+              style={{ scale: dislikeScale }}
+              whileHover={{ scale: 1.3 }}
+              onClick={() => swipe(-1)}
+              className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
+            >
+              <IoClose size={36} className="text-rose-400" />
+            </motion.button>
 
-          <motion.button
-            style={{ scale: likeScale }}
-            whileHover={{ scale: 1.3 }}
-            onClick={() => swipe(1)}
-            className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
-          >
-            <AiFillHeart size={36} className="text-purple-500" />
-          </motion.button>
-        </div>
+            <motion.button
+              style={{ scale: likeScale }}
+              whileHover={{ scale: 1.3 }}
+              onClick={() => swipe(1)}
+              className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transition"
+            >
+              <AiFillHeart size={36} className="text-purple-500" />
+            </motion.button>
+          </div>
+        )}
       </motion.div>
       {modalPhoto && (
         <PhotoModal photo={modalPhoto} onClose={() => setModalPhoto(null)} />

@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
 import { GET_RANDOM_USER, LIKE_USER } from "@/graphql/swipeQueries";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DiscoverCard from "@/components/DiscoverCard";
+import ProfileViewerCard from "@/components/ProfileViewerCard";
 
 function DiscoverPage() {
   const { data, loading, error, refetch } = useQuery(GET_RANDOM_USER, {
@@ -26,7 +26,7 @@ function DiscoverPage() {
     <div className="relative w-full min-h-[calc(100dvh-4rem)] pt-16 flex items-center justify-center px-4">
       <AnimatePresence>
         {candidate ? (
-          <DiscoverCard
+          <ProfileViewerCard
             key={candidate.id}
             user={candidate}
             onLike={(liked) =>

@@ -70,25 +70,29 @@ export default function UserCarousel({ photos = [], onPhotoClick }) {
         <img src={photoUrl("")} className="object-cover rounded-xl shadow-lg" />
       )}
 
-      <button
-        onClick={() => go(-1)}
-        className="hidden md:flex items-center justify-center
+      {size > 1 && (
+        <>
+          <button
+            onClick={() => go(-1)}
+            className="hidden md:flex items-center justify-center
               absolute left-2 top-1/2 -translate-y-1/2
               w-10 h-10 bg-white/70 hover:bg-white shadow rounded-full
               backdrop-blur z-40"
-      >
-        <IoChevronBack size={24} />
-      </button>
+          >
+            <IoChevronBack size={24} />
+          </button>
 
-      <button
-        onClick={() => go(1)}
-        className="hidden md:flex items-center justify-center
+          <button
+            onClick={() => go(1)}
+            className="hidden md:flex items-center justify-center
               absolute right-2 top-1/2 -translate-y-1/2
               w-10 h-10 bg-white/70 hover:bg-white shadow rounded-full
               backdrop-blur z-40"
-      >
-        <IoChevronForward size={24} />
-      </button>
+          >
+            <IoChevronForward size={24} />
+          </button>
+        </>
+      )}
     </div>
   );
 }

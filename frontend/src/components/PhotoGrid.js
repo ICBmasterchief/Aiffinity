@@ -27,7 +27,7 @@ import { photoUrl } from "@/utils/photoUrl";
 import PhotoModal from "@/components/PhotoModal";
 import { IoClose } from "react-icons/io5";
 import { FiEdit2, FiCheck } from "react-icons/fi";
-import Toast from "@/components/Toats";
+import Toast from "@/components/Toast";
 
 function SortableItem({ photo, index, onDelete, onClickPhoto, editable }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -83,13 +83,23 @@ function SortableItem({ photo, index, onDelete, onClickPhoto, editable }) {
   );
 }
 
-export default function PhotoGrid({ photos, refetchProfile }) {
+export default function PhotoGrid({
+  photos,
+  refetchProfile,
+  showToast = () => {},
+}) {
   const [items, setItems] = useState(photos ?? []);
   const [editing, setEditing] = useState(false);
   const [modalPhoto, setModalPhoto] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+  const MAX = 10;
+
   useEffect(() => setItems(photos ?? []), [photos]);
+
+  useEffect(() => {
+    if (items.length === 0 && editing) setEditing(false);
+  }, [items, editing]);
 
   const [uploadPhotos] = useMutation(UPLOAD_PHOTOS, {
     onCompleted: refetchProfile,
@@ -118,6 +128,13 @@ export default function PhotoGrid({ photos, refetchProfile }) {
   const handleFiles = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
+
+    if (items.length + files.length > MAX) {
+      showToast(`Máximo ${MAX} fotos`);
+      e.target.value = "";
+      return;
+    }
+
     try {
       await uploadPhotos({ variables: { files } });
     } catch (err) {
@@ -145,7 +162,9 @@ export default function PhotoGrid({ photos, refetchProfile }) {
 
   return (
     <div>
-      <label className="block mb-2 font-semibold">Fotos (máx 10):</label>
+      <label className="block mb-2 font-semibold">
+        Fotos ({items.length}/{MAX})
+      </label>
 
       <div className="my-4 flex items-center gap-4 justify-center md:justify-start">
         <input
@@ -171,18 +190,20 @@ export default function PhotoGrid({ photos, refetchProfile }) {
           Elegir archivos
         </label>
 
-        <button
-          type="button"
-          aria-label={editing ? "Terminar edición" : "Editar fotos"}
-          onClick={() => setEditing(!editing)}
-          className="
+        {items.length > 0 && (
+          <button
+            type="button"
+            aria-label={editing ? "Terminar edición" : "Editar fotos"}
+            onClick={() => setEditing(!editing)}
+            className="
             p-2 rounded-full bg-white/80 backdrop-blur
             ring-1 ring-gray-300 shadow hover:bg-white
             transition
           "
-        >
-          {editing ? <FiCheck size={18} /> : <FiEdit2 size={18} />}
-        </button>
+          >
+            {editing ? <FiCheck size={18} /> : <FiEdit2 size={18} />}
+          </button>
+        )}
       </div>
 
       {editing && (

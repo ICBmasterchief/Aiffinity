@@ -9,10 +9,12 @@ import { GET_USER } from "@/graphql/userQueries";
 import { UPDATE_PROFILE } from "@/graphql/userMutations";
 import PhotoGrid from "@/components/PhotoGrid";
 import { motion } from "framer-motion";
+import Toast from "@/components/Toast";
+import useToast from "@/hooks/useToast";
 
 function ProfilePage() {
   const { user } = useContext(AuthContext);
-  const [editingPhotos, setEditingPhotos] = useState(false);
+  const { toasts, showToast, clearToast } = useToast();
   const [formData, setFormData] = useState({
     description: "",
     age: 0,
@@ -37,11 +39,13 @@ function ProfilePage() {
 
   const [updateProfile, { loading: updating }] = useMutation(UPDATE_PROFILE, {
     onCompleted: (data) => {
-      alert("Perfil actualizado!");
+      showToast("Perfil actualizado correctamente", "success");
       refetch();
     },
     onError: (err) => {
-      console.error("Error actualizando perfil:", err);
+      const msg =
+        err?.graphQLErrors?.[0]?.message || "Error actualizando perfil";
+      showToast(msg);
     },
   });
 
@@ -58,6 +62,16 @@ function ProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (formData.description.length > 255) {
+      showToast("La descripción no puede superar 255 caracteres");
+      return;
+    }
+    if (formData.age < 18 || formData.age > 99) {
+      showToast("La edad debe estar entre 18 y 99 años");
+      return;
+    }
+
     updateProfile({
       variables: {
         description: formData.description,
@@ -81,7 +95,11 @@ function ProfilePage() {
         <h2 className="text-xl font-bold drop-shadow-md mb-4 bg-gradient-to-r from-[#B89CFF] to-[#E8D7FF] bg-clip-text text-transparent">
           Tus Fotos
         </h2>{" "}
-        <PhotoGrid photos={data.getUser.photos} refetchProfile={refetch} />
+        <PhotoGrid
+          photos={data.getUser.photos}
+          refetchProfile={refetch}
+          showToast={showToast}
+        />
       </div>
 
       <div className="space-y-6">
@@ -96,6 +114,7 @@ function ProfilePage() {
             <textarea
               ref={descriptionRef}
               rows={1}
+              maxLength={255}
               className="mt-1 w-full rounded-2xl border border-gray-300 bg-white/70 backdrop-blur p-3
                              focus:outline-none focus:border-purple-500 focus:ring-0 resize-none overflow-y-auto max-h-48"
               value={formData.description}
@@ -103,6 +122,18 @@ function ProfilePage() {
                 setFormData({ ...formData, description: e.target.value })
               }
             />
+            <div
+              className={`
+                   mt-1 text-xs text-right
+                   ${
+                     formData.description.length > 240
+                       ? "text-red-500"
+                       : "text-gray-500"
+                   }
+                 `}
+            >
+              {formData.description.length}/255
+            </div>
           </div>
 
           <div className="flex gap-4">
@@ -112,6 +143,8 @@ function ProfilePage() {
               </label>
               <input
                 type="number"
+                min={18}
+                max={99}
                 className="mt-1 w-full rounded-2xl border border-gray-300 bg-white/70 backdrop-blur p-3
                                focus:outline-none focus:border-purple-500 focus:ring-0"
                 value={formData.age}
@@ -173,6 +206,7 @@ function ProfilePage() {
           </button>
         </form>
       </div>
+      <Toast toasts={toasts} clearToast={clearToast} />
     </motion.div>
   );
 }

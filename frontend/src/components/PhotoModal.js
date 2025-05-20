@@ -1,4 +1,4 @@
-/* frontend/src/components/PhotoModal.js */
+// frontend/src/components/PhotoModal.js
 "use client";
 import { useLockBodyScroll } from "@/utils/useLockBodyScroll";
 import { useState, useEffect, useRef } from "react";
@@ -27,7 +27,7 @@ export default function PhotoModal({ photo, onClose }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] bg-black/80 flex items-center justify-center cursor-auto"
+      className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-sm flex items-center justify-center cursor-auto"
       onClick={onClose}
     >
       <button

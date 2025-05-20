@@ -56,7 +56,7 @@ function SortableItem({ photo, index, onDelete, onClickPhoto, editable }) {
         onClick={onClickPhoto}
         className={
           isMain
-            ? "w-60 h-60 object-cover rounded-lg"
+            ? "w-[14.5rem] h-[14.5rem] object-cover rounded-lg"
             : "w-28 h-28 object-cover rounded"
         }
         {...attributes}
@@ -256,7 +256,7 @@ export default function PhotoGrid({
               onClick={() => setModalPhoto(p)}
               className={
                 idx === 0
-                  ? "w-58 h-58 object-cover rounded-lg col-span-2 row-span-2"
+                  ? "w-[14.5rem] h-[14.5rem] object-cover rounded-lg col-span-2 row-span-2"
                   : "w-28 h-28 object-cover rounded"
               }
             />

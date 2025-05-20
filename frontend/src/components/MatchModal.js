@@ -2,36 +2,74 @@
 "use client";
 
 import { photoUrl } from "@/utils/photoUrl";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function MatchModal({ matchedUser, onClose, onChat }) {
   if (!matchedUser) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded shadow-lg max-w-sm mx-auto">
-        <h2 className="text-xl font-bold mb-4">
-          ¡Has hecho match con {matchedUser.name}!
-        </h2>
-        <img
-          src={photoUrl(matchedUser.mainPhoto)}
-          alt={matchedUser.name}
-          className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
-        />
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur flex items-center justify-center px-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={(e) => e.stopPropagation()}
+          className="
+            max-w-sm w-full p-8
+            bg-white backdrop-blur-md
+            rounded-3xl shadow-xl
+            text-center
+          "
+        >
+          <h2
+            className="
+              text-2xl font-bold mb-6 drop-shadow-lg
+              bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+              bg-clip-text text-transparent
+            "
           >
-            Cerrar
-          </button>
-          <button
-            onClick={onChat}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Ir al Chat
-          </button>
-        </div>
-      </div>
-    </div>
+            ¡Match con {matchedUser.name}!
+          </h2>
+
+          <img
+            src={photoUrl(matchedUser.mainPhoto)}
+            alt={matchedUser.name}
+            className="mx-auto w-40 h-40 object-cover rounded-full ring-4 ring-violet-200 shadow-lg mb-6"
+          />
+
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={onChat}
+              className="
+                px-5 py-2 rounded-full font-medium text-white
+                bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+                hover:from-[#FFD3A5] hover:to-[#FF9A9E]
+                hover:shadow-md transition
+              "
+            >
+              Ir al chat
+            </button>
+            <button
+              onClick={onClose}
+              className="
+                px-5 py-2 rounded-full font-medium
+                bg-gray-200 hover:bg-gray-300 text-slate-700
+                hover:shadow-md transition
+              "
+            >
+              Cerrar
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

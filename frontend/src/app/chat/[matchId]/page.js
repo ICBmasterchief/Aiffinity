@@ -16,8 +16,9 @@ function ChatPage() {
     fetchPolicy: "network-only",
   });
 
-  if (loading) return <p>Cargando conversación...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading)
+    return <p className="text-center py-8">Cargando conversación...</p>;
+  if (error) return <p className="text-center py-8">Error: {error.message}</p>;
 
   const chatPartner = data?.getMatchInfo?.user;
 
@@ -43,8 +44,8 @@ function ChatPage() {
         )}
         <h1
           className="
-                text-lg font-bold
-                bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+                text-lg font-bold drop-shadow-lg
+                bg-gradient-to-r from-[#b395ff] to-[#e0c9ff]
                 bg-clip-text text-transparent
               "
         >

@@ -21,6 +21,7 @@ function ProfilePage() {
     gender: "",
     searchGender: "",
   });
+  const [dirty, setDirty] = useState(false);
 
   const descriptionRef = useRef(null);
   useEffect(() => {
@@ -41,6 +42,7 @@ function ProfilePage() {
     onCompleted: (data) => {
       showToast("Perfil actualizado correctamente", "success");
       refetch();
+      setDirty(false);
     },
     onError: (err) => {
       const msg =
@@ -50,7 +52,7 @@ function ProfilePage() {
   });
 
   useEffect(() => {
-    if (data?.getUser) {
+    if (data?.getUser && !dirty) {
       setFormData({
         description: data.getUser.description || "",
         age: data.getUser.age || 0,
@@ -58,7 +60,7 @@ function ProfilePage() {
         searchGender: data.getUser.searchGender || "",
       });
     }
-  }, [data]);
+  }, [data, dirty]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -82,8 +84,8 @@ function ProfilePage() {
     });
   };
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <p className="text-center py-8">Cargando...</p>;
+  if (error) return <p className="text-center py-8">Error: {error.message}</p>;
 
   return (
     <motion.div
@@ -119,7 +121,10 @@ function ProfilePage() {
                              focus:outline-none focus:border-purple-500 focus:ring-0 resize-none overflow-y-auto max-h-48"
               value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
+                setFormData(
+                  { ...formData, description: e.target.value },
+                  setDirty(true)
+                )
               }
             />
             <div
@@ -149,7 +154,10 @@ function ProfilePage() {
                                focus:outline-none focus:border-purple-500 focus:ring-0"
                 value={formData.age}
                 onChange={(e) =>
-                  setFormData({ ...formData, age: e.target.value })
+                  setFormData(
+                    { ...formData, age: e.target.value },
+                    setDirty(true)
+                  )
                 }
                 required
               />
@@ -162,7 +170,10 @@ function ProfilePage() {
               <select
                 value={formData.gender}
                 onChange={(e) =>
-                  setFormData({ ...formData, gender: e.target.value })
+                  setFormData(
+                    { ...formData, gender: e.target.value },
+                    setDirty(true)
+                  )
                 }
                 required
                 className="mt-1 w-full rounded-2xl border border-gray-300 bg-white/70 backdrop-blur p-3
@@ -182,7 +193,10 @@ function ProfilePage() {
             <select
               value={formData.searchGender}
               onChange={(e) =>
-                setFormData({ ...formData, searchGender: e.target.value })
+                setFormData(
+                  { ...formData, searchGender: e.target.value },
+                  setDirty(true)
+                )
               }
               required
               className="mt-1 w-full rounded-2xl border border-gray-300 bg-white/70 backdrop-blur p-3

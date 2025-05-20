@@ -21,6 +21,11 @@ export default function MatchNotifier() {
   useEffect(() => {
     const n = data?.notificationAdded;
     if (n?.type === "match") {
+      const skip = sessionStorage.getItem("skipNextMatchNotif");
+      if (skip) {
+        sessionStorage.removeItem("skipNextMatchNotif");
+        return;
+      }
       setNotif(n);
     }
   }, [data]);
@@ -34,10 +39,10 @@ export default function MatchNotifier() {
 
   if (!notif) return null;
 
-  const { name, mainPhoto } = notif.payload;
+  const { name, photo } = notif.payload;
   return (
     <MatchModal
-      matchedUser={{ name, mainPhoto }}
+      matchedUser={{ name, mainPhoto: photo }}
       onClose={handleClose}
       onChat={handleChat}
     />

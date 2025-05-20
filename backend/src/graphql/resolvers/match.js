@@ -2,6 +2,10 @@
 import Match from "../../models/Match.js";
 import User from "../../models/User.js";
 import { Op } from "sequelize";
+import Swipe from "../../models/Swipe.js";
+import UserChatMessage from "../../models/UserChatMessage.js";
+import Notification from "../../models/Notification.js";
+import sequelize from "../../config/database.js";
 
 const matchResolvers = {
   Query: {
@@ -45,6 +49,47 @@ const matchResolvers = {
         id: match.id,
         user: otherUser,
       };
+    },
+  },
+  Mutation: {
+    deleteMatch: async (_, { matchId }, { user }) => {
+      if (!user) throw new Error("No autorizado");
+
+      const match = await Match.findByPk(matchId);
+      if (!match) throw new Error("Match no encontrado");
+
+      const userId = user.userId;
+      if (![match.user1Id, match.user2Id].includes(userId))
+        throw new Error("No permitido");
+
+      await sequelize.transaction(async (t) => {
+        await UserChatMessage.destroy({
+          where: { conversationId: matchId },
+          transaction: t,
+        });
+
+        await Notification.destroy({
+          where: {
+            type: { [Op.in]: ["message", "match"] },
+            payload: { matchId },
+          },
+          transaction: t,
+        });
+
+        await Swipe.destroy({
+          where: {
+            [Op.or]: [
+              { userId: match.user1Id, targetUserId: match.user2Id },
+              { userId: match.user2Id, targetUserId: match.user1Id },
+            ],
+          },
+          transaction: t,
+        });
+
+        await match.destroy({ transaction: t });
+      });
+
+      return true;
     },
   },
 };

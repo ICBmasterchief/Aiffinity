@@ -11,6 +11,10 @@ const matchTypeDefs = gql`
     getMatches: [MatchSummary!]!
     getMatchInfo(matchId: ID!): MatchSummary
   }
+
+  extend type Mutation {
+    deleteMatch(matchId: ID!): Boolean!
+  }
 `;
 
 export default matchTypeDefs;

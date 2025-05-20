@@ -1,7 +1,7 @@
 // frontend/src/app/matches/page.js
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_MATCHES } from "@/graphql/matchQueries";
 import { MARK_NOTIFS_READ } from "@/graphql/notificationQueries";
@@ -10,6 +10,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useNotifs } from "@/context/NotificationsContext";
 import { photoUrl } from "@/utils/photoUrl";
 import { motion } from "framer-motion";
+import Toast from "@/components/Toast";
+import useToast from "@/hooks/useToast";
+import { DELETE_MATCH } from "@/graphql/matchMutations";
+import { IoClose } from "react-icons/io5";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 function MatchesPage() {
   const {
@@ -18,6 +23,10 @@ function MatchesPage() {
     clearMatchBadge,
     notifs,
   } = useNotifs();
+
+  const [matchToDelete, setMatchToDelete] = useState(null);
+
+  const { toasts, showToast, clearToast } = useToast();
 
   useEffect(() => {
     if (
@@ -28,10 +37,18 @@ function MatchesPage() {
     }
   }, [notifs, clearNotifications]);
 
-  const { data, loading, error } = useQuery(GET_MATCHES, {
+  const { data, loading, error, refetch } = useQuery(GET_MATCHES, {
     fetchPolicy: "network-only",
   });
   const [markRead] = useMutation(MARK_NOTIFS_READ);
+
+  const [deleteMatch] = useMutation(DELETE_MATCH, {
+    onCompleted: () => {
+      showToast("Match eliminado", "success");
+      refetch();
+    },
+    onError: (err) => showToast(err.message),
+  });
 
   if (loading) return <p className="text-center py-8">Cargando matches...</p>;
   if (error) return <p className="text-center py-8">Error: {error.message}</p>;
@@ -72,6 +89,17 @@ function MatchesPage() {
                   hover:shadow-md transition-shadow h-full
                 "
               >
+                <button
+                  onClick={() => setMatchToDelete(m.id)}
+                  className="
+                    absolute top-2 right-2 z-10
+                  bg-white/80 backdrop-blur p-1 rounded-full shadow
+                  hover:bg-white transition
+                  "
+                  aria-label="Eliminar match"
+                >
+                  <IoClose size={14} className="text-gray-500" />
+                </button>
                 <div className="flex flex-col items-center">
                   {isNewMatch && (
                     <span className="absolute top-2 left-2 px-1 py-0.5 bg-green-500 text-white text-xs font-semibold rounded">
@@ -89,9 +117,11 @@ function MatchesPage() {
                       className="w-20 h-20 rounded-full object-cover ring-2 ring-violet-200 transition duration-200 group-hover:brightness-75"
                     />
                     <span
-                      className="absolute inset-0 flex items-center justify-center
+                      className="
+                        absolute inset-0 flex items-center justify-center
                       text-white text-sm font-semibold
-                        opacity-0 group-hover:opacity-100 transition"
+                        opacity-0 group-hover:opacity-100 transition
+                      "
                     >
                       Ver perfil
                     </span>
@@ -123,8 +153,7 @@ function MatchesPage() {
                   {hasUnreadMsg && (
                     <span
                       className="
-                        absolute top-1/2 -translate-y-1/2
-                        -right-2
+                        absolute top-1/2 -translate-y-1/2 -right-2
                         w-2 h-2 -mx-1 mt-1 bg-red-500 rounded-full
                         pointer-events-none
                       "
@@ -136,6 +165,16 @@ function MatchesPage() {
           })}
         </motion.div>
       )}
+      {matchToDelete && (
+        <ConfirmDeleteModal
+          onCancel={() => setMatchToDelete(null)}
+          onConfirm={() => {
+            deleteMatch({ variables: { matchId: matchToDelete } });
+            setMatchToDelete(null);
+          }}
+        />
+      )}
+      <Toast toasts={toasts} clearToast={clearToast} />
     </div>
   );
 }

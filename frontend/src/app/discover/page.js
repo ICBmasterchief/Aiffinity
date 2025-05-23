@@ -3,19 +3,25 @@
 
 import { useQuery, useMutation } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
-import { GET_RANDOM_USER, LIKE_USER } from "@/graphql/swipeQueries";
+import { LIKE_USER } from "@/graphql/swipeMutations";
+import { GET_COMPATIBLE } from "@/graphql/discoverQueries";
+import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProfileViewerCard from "@/components/ProfileViewerCard";
 import { useState } from "react";
 import MatchModal from "@/components/MatchModal";
+import { useRouter } from "next/navigation";
+import CompatTag from "@/components/CompatTag";
 
 function DiscoverPage() {
   const [localMatch, setLocalMatch] = useState(null);
+  const router = useRouter();
 
-  const { data, loading, error, refetch } = useQuery(GET_RANDOM_USER, {
+  const { data, loading, error, refetch } = useQuery(GET_COMPATIBLE, {
     fetchPolicy: "network-only",
   });
-  const candidate = data?.getRandomUser;
+  const candidate = data?.getCompatibleCandidate?.user;
+  const compat = data?.getCompatibleCandidate?.compat ?? null;
 
   const [likeUser] = useMutation(LIKE_USER, {
     onCompleted: ({ likeUser }) => {
@@ -41,16 +47,26 @@ function DiscoverPage() {
       <div className="relative w-full min-h-[calc(100dvh-4rem)] pt-16 flex items-center justify-center px-4">
         <AnimatePresence>
           {candidate ? (
-            <ProfileViewerCard
-              key={candidate.id}
-              user={candidate}
-              onLike={(liked) => {
-                if (liked) {
-                  sessionStorage.setItem("skipNextMatchNotif", "1");
-                }
-                likeUser({ variables: { targetUserId: candidate.id, liked } });
-              }}
-            />
+            <div className="w-full flex-col justify-items-center">
+              <CompatTag
+                compat={compat}
+                className="sticky top-[4.5rem] -mt-12 self-center z-20 pointer-events-none"
+              />
+              <div className="w-full mt-[4rem] flex-col justify-items-center">
+                <ProfileViewerCard
+                  key={candidate.id}
+                  user={candidate}
+                  onLike={(liked) => {
+                    if (liked) {
+                      sessionStorage.setItem("skipNextMatchNotif", "1");
+                    }
+                    likeUser({
+                      variables: { targetUserId: candidate.id, liked },
+                    });
+                  }}
+                />
+              </div>
+            </div>
           ) : (
             <p>No hay usuarios disponibles</p>
           )}

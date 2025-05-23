@@ -149,7 +149,7 @@ export default function Chat({ matchId, chatPartner }) {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Escribe tu mensaje…"
+          placeholder="Escribe tu mensaje..."
           className="
             flex-1 rounded-full px-4 py-2 mb-5 ml-2
             bg-white/70 backdrop-blur text-gray-800

@@ -2,6 +2,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 import ChatMessage from "./ChatMessage.js";
+import UserAIProfile from "./UserAIProfile.js";
 
 const User = sequelize.define("User", {
   id: {
@@ -42,5 +43,8 @@ const User = sequelize.define("User", {
 
 User.hasMany(ChatMessage, { foreignKey: "userId" });
 ChatMessage.belongsTo(User, { foreignKey: "userId" });
+
+User.hasOne(UserAIProfile, { foreignKey: "userId" });
+UserAIProfile.belongsTo(User, { foreignKey: "userId" });
 
 export default User;

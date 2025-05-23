@@ -7,6 +7,8 @@ import matchTypeDefs from "./match.js";
 import chatConversationTypeDefs from "./chatConversation.js";
 import notificationTypeDefs from "./notification.js";
 import userPhotoTypeDefs from "./userPhoto.js";
+import aiProfileTypeDefs from "./aiProfile.js";
+import discoverTypeDefs from "./discover.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -31,4 +33,6 @@ export default [
   chatConversationTypeDefs,
   notificationTypeDefs,
   userPhotoTypeDefs,
+  aiProfileTypeDefs,
+  discoverTypeDefs,
 ];

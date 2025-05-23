@@ -110,7 +110,7 @@ export default function LoginPage() {
               hover:shadow-md transition
             "
           >
-            {loading ? "Entrando…" : "Iniciar Sesión"}
+            {loading ? "Entrando..." : "Iniciar Sesión"}
           </button>
         </form>
         <p className="mt-6 text-sm text-center">

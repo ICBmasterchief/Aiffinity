@@ -15,7 +15,7 @@ function UserViewer() {
     fetchPolicy: "network-only",
   });
 
-  if (loading) return <p className="text-center py-8">Cargando…</p>;
+  if (loading) return <p className="text-center py-8">Cargando...</p>;
   if (error) return <p className="text-center py-8">Error: {error.message}</p>;
 
   return (

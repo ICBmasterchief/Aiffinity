@@ -11,10 +11,6 @@ const swipeTypeDefs = gql`
   extend type Mutation {
     likeUser(targetUserId: ID!, liked: Boolean!): LikeUserResponse!
   }
-
-  extend type Query {
-    getRandomUser: User
-  }
 `;
 
 export default swipeTypeDefs;

@@ -11,61 +11,6 @@ import UserPhoto from "../../models/UserPhoto.js";
 const NOTIF_TOPIC = "NOTIFICATION_ADDED";
 
 const swipeResolvers = {
-  Query: {
-    getRandomUser: async (_, __, context) => {
-      if (!context.user) {
-        throw new Error("No autorizado");
-      }
-      const userId = context.user.userId;
-
-      const currentUser = await User.findByPk(userId);
-      if (!currentUser || !currentUser.gender || !currentUser.searchGender) {
-        throw new Error("Perfil incompleto");
-      }
-
-      const genderMapping = {
-        hombres: "hombre",
-        mujeres: "mujer",
-      };
-
-      let candidateGenderCondition = {};
-      if (currentUser.searchGender !== "ambos") {
-        candidateGenderCondition = {
-          gender: genderMapping[currentUser.searchGender],
-        };
-      }
-
-      const myPluralGender =
-        currentUser.gender === "hombre" ? "hombres" : "mujeres";
-
-      const candidateSearchGenderCondition = {
-        searchGender: {
-          [Op.or]: ["ambos", myPluralGender],
-        },
-      };
-
-      const swipedRecords = await Swipe.findAll({
-        attributes: ["targetUserId"],
-        where: { userId },
-      });
-      const swipedUserIds = swipedRecords.map((record) => record.targetUserId);
-
-      const whereClause = {
-        id: {
-          [Op.ne]: userId,
-          ...(swipedUserIds.length ? { [Op.notIn]: swipedUserIds } : {}),
-        },
-        ...candidateGenderCondition,
-        ...candidateSearchGenderCondition,
-      };
-
-      const candidate = await User.findOne({
-        where: whereClause,
-        order: sequelize.random(),
-      });
-      return candidate;
-    },
-  },
   Mutation: {
     likeUser: async (_, { targetUserId, liked }, context) => {
       if (!context.user) {

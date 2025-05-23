@@ -131,7 +131,7 @@ export default function RegisterPage() {
             hover:shadow-md transition
           "
         >
-          {loading ? "Registrando…" : "Registrarse"}
+          {loading ? "Registrando..." : "Registrarse"}
         </button>
       </form>
       <Toast toasts={toasts} clearToast={clearToast} />

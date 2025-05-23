@@ -216,7 +216,7 @@ function ProfilePage() {
                            rounded-full text-white font-semibold
                            hover:from-[#FFD3A5] hover:to-[#FF9A9E] hover:shadow-md transition"
           >
-            {updating ? "Actualizando…" : "Guardar Perfil"}
+            {updating ? "Actualizando..." : "Guardar Perfil"}
           </button>
         </form>
       </div>

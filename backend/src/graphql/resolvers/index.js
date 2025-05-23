@@ -6,6 +6,8 @@ import matchResolvers from "./match.js";
 import chatConversationResolvers from "./chatConversation.js";
 import notificationResolvers from "./notification.js";
 import userPhotoResolvers from "./userPhoto.js";
+import aiProfileResolvers from "./aiProfile.js";
+import discoverResolvers from "./discover.js";
 
 const resolvers = {
   Upload: userPhotoResolvers.Upload,
@@ -13,10 +15,11 @@ const resolvers = {
   Query: {
     ...userResolvers.Query,
     ...openaiResolvers.Query,
-    ...swipeResolvers.Query,
     ...matchResolvers.Query,
     ...chatConversationResolvers.Query,
     ...notificationResolvers.Query,
+    ...aiProfileResolvers.Query,
+    ...discoverResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -26,6 +29,7 @@ const resolvers = {
     ...chatConversationResolvers.Mutation,
     ...notificationResolvers.Mutation,
     ...userPhotoResolvers.Mutation,
+    ...aiProfileResolvers.Mutation,
   },
   Subscription: {
     ...chatConversationResolvers.Subscription,

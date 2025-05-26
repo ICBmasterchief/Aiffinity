@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useToast from "@/hooks/useToast";
 import Toast from "@/components/Toast";
+import { motion } from "framer-motion";
 
 const Q = [
   "¿Cómo describirías tu plan ideal de fin de semana?",
@@ -77,13 +78,16 @@ export default function AIQuiz() {
       return;
     }
     setSaving(true);
-    setError("");
     const payload = Q.map((q, i) => ({ q, a: ans[i] }));
     saveProfile({ variables: { answers: payload } });
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-xl mx-auto p-6 space-y-6"
+    >
       <h1 className="text-2xl font-bold text-center">Cuestionario AIffinity</h1>
 
       {prof && (
@@ -116,9 +120,9 @@ export default function AIQuiz() {
             onClick={handleSubmit}
             disabled={saving}
             className="w-full py-3 rounded-full text-white
-          bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
-          flex items-center justify-center gap-2
-          disabled:opacity-50 disabled:cursor-not-allowed"
+            bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5]
+            flex items-center justify-center gap-2
+            disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
@@ -143,7 +147,6 @@ export default function AIQuiz() {
                     d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                   />
                 </svg>
-                ;
               </>
             ) : prof ? (
               "Actualizar perfil AIffinity"
@@ -160,6 +163,6 @@ export default function AIQuiz() {
         </p>
       )}
       <Toast toasts={toasts} clearToast={clearToast} />
-    </div>
+    </motion.div>
   );
 }

@@ -24,18 +24,24 @@ export const UPDATE_PROFILE = gql`
     $age: Int
     $gender: String
     $searchGender: String
+    $searchMinAge: Int
+    $searchMaxAge: Int
   ) {
     updateProfile(
       description: $description
       age: $age
       gender: $gender
       searchGender: $searchGender
+      searchMinAge: $searchMinAge
+      searchMaxAge: $searchMaxAge
     ) {
       id
       description
       age
       gender
       searchGender
+      searchMinAge
+      searchMaxAge
     }
   }
 `;

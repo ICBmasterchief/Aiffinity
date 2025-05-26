@@ -64,7 +64,7 @@ const userResolvers = {
     },
     updateProfile: async (
       _,
-      { description, age, gender, searchGender },
+      { description, age, gender, searchGender, searchMinAge, searchMaxAge },
       context
     ) => {
       if (!context.user) {
@@ -81,6 +81,24 @@ const userResolvers = {
         throw new GraphQLError("La edad debe estar entre 18 y 99 años", {
           extensions: { code: "BAD_USER_INPUT" },
         });
+      }
+      if (
+        (searchMinAge < 18 || searchMinAge > 99) &&
+        searchMinAge > searchMaxAge
+      ) {
+        throw new GraphQLError(
+          "La edad mínima de búsqueda debe estar entre 18 y 99 años y ser menor que la edad máxima de búsqueda",
+          { extensions: { code: "BAD_USER_INPUT" } }
+        );
+      }
+      if (
+        (searchMaxAge < 18 || searchMaxAge > 99) &&
+        searchMaxAge < searchMinAge
+      ) {
+        throw new GraphQLError(
+          "La edad máxima de búsqueda debe estar entre 18 y 99 años y ser mayor que la edad mínima de búsqueda",
+          { extensions: { code: "BAD_USER_INPUT" } }
+        );
       }
       const validGender = ["hombre", "mujer"];
       if (gender && !validGender.includes(gender)) {
@@ -104,6 +122,8 @@ const userResolvers = {
       user.age = age;
       user.gender = gender;
       user.searchGender = searchGender;
+      user.searchMinAge = searchMinAge;
+      user.searchMaxAge = searchMaxAge;
 
       await user.save();
       return user;

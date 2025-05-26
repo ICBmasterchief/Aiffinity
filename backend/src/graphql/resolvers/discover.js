@@ -19,6 +19,12 @@ function buildRandomWhere(currentUser, swipedUserIds) {
     searchGender: { [Op.or]: ["ambos", myPlural] },
   };
 
+  const candidateAge = {
+    age: {
+      [Op.between]: [currentUser.searchMinAge, currentUser.searchMaxAge],
+    },
+  };
+
   return {
     id: {
       [Op.ne]: currentUser.id,
@@ -26,6 +32,7 @@ function buildRandomWhere(currentUser, swipedUserIds) {
     },
     ...candidateGender,
     ...candidateSearchGender,
+    ...candidateAge,
   };
 }
 
@@ -73,7 +80,19 @@ const discoverResolvers = {
 
         const iaCands = await UserAIProfile.findAll({
           where: { userId: { [Op.notIn]: [user.userId, ...swipedIds] } },
-          include: ["User"],
+          include: [
+            {
+              association: "User",
+              where: {
+                age: {
+                  [Op.between]: [
+                    currentUser.searchMinAge,
+                    currentUser.searchMaxAge,
+                  ],
+                },
+              },
+            },
+          ],
         });
 
         const picked = [];

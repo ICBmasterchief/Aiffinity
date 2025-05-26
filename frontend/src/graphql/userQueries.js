@@ -2,26 +2,6 @@
 
 import { gql } from "@apollo/client";
 
-export const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      name
-      email
-      description
-      age
-      gender
-      searchGender
-      mainPhoto
-      photos {
-        id
-        filePath
-        position
-      }
-    }
-  }
-`;
-
 export const GET_USER = gql`
   query GetUser($id: ID!) {
     getUser(id: $id) {
@@ -32,6 +12,8 @@ export const GET_USER = gql`
       age
       gender
       searchGender
+      searchMinAge
+      searchMaxAge
       mainPhoto
       photos {
         id

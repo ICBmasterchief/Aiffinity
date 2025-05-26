@@ -11,6 +11,7 @@ import PhotoGrid from "@/components/PhotoGrid";
 import { motion } from "framer-motion";
 import Toast from "@/components/Toast";
 import useToast from "@/hooks/useToast";
+import RangeSlider from "@/components/RangeSlider";
 
 function ProfilePage() {
   const { user } = useContext(AuthContext);
@@ -20,6 +21,8 @@ function ProfilePage() {
     age: 0,
     gender: "",
     searchGender: "",
+    searchMinAge: 18,
+    searchMaxAge: 99,
   });
   const [dirty, setDirty] = useState(false);
 
@@ -58,6 +61,8 @@ function ProfilePage() {
         age: data.getUser.age || 0,
         gender: data.getUser.gender || "",
         searchGender: data.getUser.searchGender || "",
+        searchMinAge: data.getUser.searchMinAge || 18,
+        searchMaxAge: data.getUser.searchMaxAge || 99,
       });
     }
   }, [data, dirty]);
@@ -80,6 +85,8 @@ function ProfilePage() {
         age: parseInt(formData.age),
         gender: formData.gender,
         searchGender: formData.searchGender,
+        searchMinAge: formData.searchMinAge,
+        searchMaxAge: formData.searchMaxAge,
       },
     });
   };
@@ -207,6 +214,27 @@ function ProfilePage() {
               <option value="mujeres">Mujeres</option>
               <option value="ambos">Ambos</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block mb-5 text-sm font-medium text-gray-700">
+              Rango de edad preferido
+            </label>
+            <RangeSlider
+              value={[formData.searchMinAge, formData.searchMaxAge]}
+              onChange={([min, max]) =>
+                setFormData(
+                  {
+                    ...formData,
+                    searchMinAge: min,
+                    searchMaxAge: max,
+                  },
+                  setDirty(true)
+                )
+              }
+              MIN={18}
+              MAX={99}
+            />
           </div>
 
           <button

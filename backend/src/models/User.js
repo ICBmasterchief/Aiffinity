@@ -35,6 +35,16 @@ const User = sequelize.define("User", {
     type: DataTypes.ENUM("hombres", "mujeres", "ambos"),
     allowNull: true,
   },
+  searchMinAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 18,
+  },
+  searchMaxAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 99,
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: true,

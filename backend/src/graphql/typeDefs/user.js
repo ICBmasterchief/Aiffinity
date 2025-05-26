@@ -10,6 +10,8 @@ const userTypeDefs = gql`
     age: Int
     gender: String
     searchGender: String
+    searchMinAge: Int
+    searchMaxAge: Int
     mainPhoto: String
     photos: [Photo!]!
   }
@@ -27,6 +29,8 @@ const userTypeDefs = gql`
       age: Int
       gender: String
       searchGender: String
+      searchMinAge: Int
+      searchMaxAge: Int
     ): User!
   }
 `;

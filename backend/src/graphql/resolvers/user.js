@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../../models/User.js";
 import { GraphQLError } from "graphql";
+import UserAIProfile from "../../models/UserAIProfile.js";
+
+const MAX_NAME = 20;
 
 const userResolvers = {
   Query: {
@@ -15,6 +18,12 @@ const userResolvers = {
   },
   Mutation: {
     register: async (_, { name, email, password }) => {
+      if (name.trim().length === 0 || name.length > MAX_NAME) {
+        throw new GraphQLError(
+          `El nombre es obligatorio y no puede superar ${MAX_NAME} caracteres`,
+          { extensions: { code: "BAD_USER_INPUT" } }
+        );
+      }
       if (!/^[\w.+-]+@\w+\.\w+$/.test(email)) {
         throw new GraphQLError("Email no válido", {
           extensions: { code: "BAD_USER_INPUT" },
@@ -128,6 +137,9 @@ const userResolvers = {
       await user.save();
       return user;
     },
+  },
+  User: {
+    hasAIProfile: async (parent) => !!(await UserAIProfile.findByPk(parent.id)),
   },
 };
 

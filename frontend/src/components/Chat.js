@@ -8,6 +8,11 @@ import {
   SEND_MESSAGE,
   CONVERSATION_MESSAGE_SUBSCRIPTION,
 } from "@/graphql/chatConversationQueries";
+import {
+  STARTER_STATUS,
+  GENERATE_STARTER,
+  SYSTEM_TOPIC_ADDED,
+} from "@/graphql/chatStarter";
 import { AuthContext } from "@/context/AuthContext";
 import { useNotifs } from "@/context/NotificationsContext";
 import { IoSend } from "react-icons/io5";
@@ -25,6 +30,22 @@ export default function Chat({ matchId, chatPartner }) {
     fetchPolicy: "network-only",
   });
 
+  const {
+    data: starterData,
+    loading: starterLoading,
+    refetch: refetchStarter,
+  } = useQuery(STARTER_STATUS, {
+    variables: { matchId },
+  });
+
+  const [generateStarter, { loading: genLoading }] = useMutation(
+    GENERATE_STARTER,
+    {
+      variables: { matchId },
+      onCompleted: () => refetchStarter(),
+    }
+  );
+
   const [sendMessageMutation] = useMutation(SEND_MESSAGE);
 
   const { data: subscriptionData, error: subscriptionError } = useSubscription(
@@ -34,6 +55,15 @@ export default function Chat({ matchId, chatPartner }) {
       shouldResubscribe: true,
     }
   );
+
+  useSubscription(SYSTEM_TOPIC_ADDED, {
+    variables: { matchId },
+    onData: ({ data }) => {
+      const m = data.data?.systemTopicAdded;
+      if (m) setMessages((prev) => [...prev, m]);
+      refetchStarter();
+    },
+  });
 
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -108,10 +138,41 @@ export default function Chat({ matchId, chatPartner }) {
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto px-4 py-6 space-y-4"
       >
+        {!starterLoading &&
+          starterData?.starterStatus.canGenerate &&
+          !starterData?.starterStatus.hasStarter && (
+            <div className="w-full flex justify-center mb-4">
+              <button
+                onClick={() => generateStarter()}
+                disabled={genLoading}
+                className="
+                 px-4 py-2 rounded-full shadow font-medium text-white
+                 bg-gradient-to-r from-[#B89CFF] to-[#E8D7FF]
+                 hover:from-[#CBA4FF] hover:to-[#B89CFF]
+                 disabled:opacity-60
+               "
+              >
+                {genLoading ? "Generando…" : "💡 Romper el hielo"}
+              </button>
+            </div>
+          )}
         {loadingMessages ? (
           <p>Cargando mensajes...</p>
         ) : (
           messages.map((msg, index) => {
+            if (msg.system) {
+              return (
+                <div key={msg.id} className="text-center my-6">
+                  <div
+                    className="inline-block bg-purple-100 text-purple-800
+                                      px-4 py-3 rounded-xl shadow leading-relaxed
+                                      whitespace-pre-line text-sm"
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              );
+            }
             const isMyMessage = String(msg.senderId) === String(user?.userId);
             return (
               <div
@@ -125,7 +186,7 @@ export default function Chat({ matchId, chatPartner }) {
                     max-w-[70%] break-words px-4 py-2 rounded-2xl shadow
                     ${
                       isMyMessage
-                        ? "bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] text-white"
+                        ? "bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] text-slate-700"
                         : "bg-white/70 backdrop-blur text-gray-800"
                     }
                   `}

@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Chat from "@/components/Chat";
 import { photoUrl } from "@/utils/photoUrl";
 import { motion } from "framer-motion";
+import AIFlag from "@/components/AIFlag";
 
 function ChatPage() {
   const { matchId } = useParams();
@@ -45,14 +46,15 @@ function ChatPage() {
         <h1
           className="
                 text-lg font-bold drop-shadow-lg
-                bg-gradient-to-r from-[#b395ff] to-[#e0c9ff]
+                bg-gradient-to-r from-[#9d64ff] to-[#be8cff]
                 bg-clip-text text-transparent
               "
         >
-          {`Chat con ${chatPartner ? chatPartner.name : "usuario"}`}
+          Chat con {chatPartner ? chatPartner.name : "usuario"}{" "}
+          {chatPartner?.hasAIProfile && <AIFlag />}
         </h1>
       </div>
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-y-auto">
         <Chat matchId={matchId} chatPartner={chatPartner} />
       </div>
     </motion.div>

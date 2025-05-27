@@ -9,6 +9,7 @@ import notificationTypeDefs from "./notification.js";
 import userPhotoTypeDefs from "./userPhoto.js";
 import aiProfileTypeDefs from "./aiProfile.js";
 import discoverTypeDefs from "./discover.js";
+import chatStarterTypeDefs from "./chatStarter.js";
 
 const baseTypeDefs = gql`
   type Query {
@@ -35,4 +36,5 @@ export default [
   userPhotoTypeDefs,
   aiProfileTypeDefs,
   discoverTypeDefs,
+  chatStarterTypeDefs,
 ];

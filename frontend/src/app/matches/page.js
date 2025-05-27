@@ -15,6 +15,7 @@ import useToast from "@/hooks/useToast";
 import { DELETE_MATCH } from "@/graphql/matchMutations";
 import { IoClose } from "react-icons/io5";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
+import AIFlag from "@/components/AIFlag";
 
 function MatchesPage() {
   const {
@@ -128,6 +129,7 @@ function MatchesPage() {
                   </Link>
                   <h2 className="mt-2 text-lg font-medium leading-snug">
                     {m.user.name}
+                    {m.user.hasAIProfile && <AIFlag />}
                   </h2>
                 </div>
                 <Link
@@ -142,9 +144,9 @@ function MatchesPage() {
                   <button
                     className="
                       mt-2 px-4 py-1 w-full 
-                      bg-gradient-to-r from-[#B89CFF] to-[#CBA4FF] 
+                      bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] 
                     text-white text-sm font-medium rounded-full 
-                    hover:from-[#CBA4FF] hover:to-[#B89CFF] 
+                    hover:from-[#FFD3A5] hover:to-[#FF9A9E] 
                       hover:shadow-md hover:scale-105 transition 
                     "
                   >

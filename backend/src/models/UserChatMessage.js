@@ -20,6 +20,11 @@ const UserChatMessage = sequelize.define("UserChatMessage", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  system: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 export default UserChatMessage;

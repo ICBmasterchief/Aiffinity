@@ -12,6 +12,7 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import AIFlag from "@/components/AIFlag";
 
 const DURATION = 0.35;
 
@@ -103,8 +104,10 @@ export default function ProfileViewerCard({
           />
         </div>
 
-        <h2 className="mt-4 w-full px-4 text-center font-bold leading-tight text-[clamp(1.1rem,4vw,1.75rem)] truncate">
-          {user.name}, {user.age ?? "--"}
+        <h2 className="mt-4 w-full px-4 text-center font-bold leading-tight text-[clamp(1rem,5vw,1.75rem)] ">
+          {user.name}
+          {user.hasAIProfile && <AIFlag className="w-7 h-7" />},{" "}
+          {user.age ?? "--"}
         </h2>
 
         <div className="flex flex-wrap justify-center gap-2 mt-3">

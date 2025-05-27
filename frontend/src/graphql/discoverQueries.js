@@ -16,6 +16,7 @@ export const GET_COMPATIBLE = gql`
           filePath
           position
         }
+        hasAIProfile
       }
       compat
     }

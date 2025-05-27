@@ -15,7 +15,9 @@ const chatConversationResolvers = {
       return await UserChatMessage.findAll({
         where: { conversationId: matchId },
         order: [["createdAt", "ASC"]],
-      });
+      }).then((msgs) =>
+        msgs.map((m) => ({ ...m.toJSON(), system: !!m.system }))
+      );
     },
   },
   Mutation: {

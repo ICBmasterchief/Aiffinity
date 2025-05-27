@@ -1,4 +1,4 @@
-// backend/src/graphql/typeDefs/aiProfile.js
+// backend/src/graphql/resolvers/aiProfile.js
 
 import openai from "../../utils/openaiClient.js";
 import UserAIProfile from "../../models/UserAIProfile.js";

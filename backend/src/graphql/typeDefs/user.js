@@ -14,6 +14,7 @@ const userTypeDefs = gql`
     searchMaxAge: Int
     mainPhoto: String
     photos: [Photo!]!
+    hasAIProfile: Boolean! 
   }
 
   extend type Query {

@@ -7,6 +7,7 @@ const chatConversationTypeDefs = gql`
     conversationId: ID!
     senderId: Int!
     content: String!
+    system: Boolean
     createdAt: String
     updatedAt: String
   }

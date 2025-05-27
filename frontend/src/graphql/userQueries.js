@@ -20,6 +20,7 @@ export const GET_USER = gql`
         filePath
         position
       }
+      hasAIProfile
     }
   }
 `;

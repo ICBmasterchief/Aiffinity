@@ -17,6 +17,7 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const { toasts, showToast, clearToast } = useToast();
 
@@ -37,10 +38,15 @@ export default function RegisterPage() {
           password: formState.password,
         },
         onError: (err) => {
-          const msg = err?.graphQLErrors?.[0]?.message || "Error al registrar";
+          const msg =
+            err?.graphQLErrors?.[0]?.message || "Error al iniciar sesión";
           showToast(msg);
         },
       });
+    },
+    onError: (err) => {
+      const msg = err?.graphQLErrors?.[0]?.message || "Error al registrar";
+      showToast(msg);
     },
   });
 
@@ -55,12 +61,17 @@ export default function RegisterPage() {
     const errors = [];
 
     if (!formState.name.trim()) errors.push("El nombre es obligatorio");
+    if (formState.name.length > 20)
+      errors.push("El nombre no puede superar los 20 caracteres");
 
     const emailRegex = /^[\w.+-]+@\w+\.\w+$/;
     if (!emailRegex.test(formState.email)) errors.push("E-mail no válido");
 
     if (formState.password.length < 4)
       errors.push("La contraseña debe tener al menos 4 caracteres");
+
+    if (formState.password !== formState.confirmPassword)
+      errors.push("Las contraseñas no coinciden");
 
     if (errors.length) {
       errors.forEach((msg) => showToast(msg));
@@ -81,6 +92,7 @@ export default function RegisterPage() {
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
+          maxLength={20}
           placeholder="Nombre"
           value={formState.name}
           onChange={(e) => setFormState({ ...formState, name: e.target.value })}
@@ -113,6 +125,21 @@ export default function RegisterPage() {
           value={formState.password}
           onChange={(e) =>
             setFormState({ ...formState, password: e.target.value })
+          }
+          required
+          className="
+              w-full rounded-2xl border border-gray-300
+              bg-white/70 backdrop-blur p-3 text-black
+              focus:outline-none focus:border-purple-500
+            "
+        />
+        <input
+          type="password"
+          minLength={4}
+          placeholder="Confirmar contraseña"
+          value={formState.confirmPassword}
+          onChange={(e) =>
+            setFormState({ ...formState, confirmPassword: e.target.value })
           }
           required
           className="

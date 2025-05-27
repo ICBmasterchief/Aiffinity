@@ -9,6 +9,7 @@ export const GET_MATCHES = gql`
         id
         name
         mainPhoto
+        hasAIProfile
       }
     }
   }
@@ -22,6 +23,7 @@ export const GET_MATCH_INFO = gql`
         id
         name
         mainPhoto
+        hasAIProfile
       }
     }
   }

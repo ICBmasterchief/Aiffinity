@@ -8,6 +8,7 @@ import notificationResolvers from "./notification.js";
 import userPhotoResolvers from "./userPhoto.js";
 import aiProfileResolvers from "./aiProfile.js";
 import discoverResolvers from "./discover.js";
+import chatStarterResolvers from "./chatStarter.js";
 
 const resolvers = {
   Upload: userPhotoResolvers.Upload,
@@ -20,6 +21,7 @@ const resolvers = {
     ...notificationResolvers.Query,
     ...aiProfileResolvers.Query,
     ...discoverResolvers.Query,
+    ...chatStarterResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -30,13 +32,16 @@ const resolvers = {
     ...notificationResolvers.Mutation,
     ...userPhotoResolvers.Mutation,
     ...aiProfileResolvers.Mutation,
+    ...chatStarterResolvers.Mutation,
   },
   Subscription: {
     ...chatConversationResolvers.Subscription,
     ...notificationResolvers.Subscription,
+    ...chatStarterResolvers.Subscription,
   },
   User: {
     ...userPhotoResolvers.User,
+    ...userResolvers.User,
   },
 };
 

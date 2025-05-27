@@ -8,6 +8,7 @@ export const GET_CONVERSATION = gql`
       conversationId
       senderId
       content
+      system
       createdAt
       updatedAt
     }
@@ -34,6 +35,7 @@ export const CONVERSATION_MESSAGE_SUBSCRIPTION = gql`
       conversationId
       senderId
       content
+      system
       createdAt
       updatedAt
     }

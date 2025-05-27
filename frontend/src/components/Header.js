@@ -65,37 +65,44 @@ export default function Header() {
         px-4 md:px-8
       "
     >
-      <h1 className="text-3xl font-bold select-none flex items-center ">
-        <span className="relative translate-x-3 translate-y-1">
-          <svg viewBox="0 0 100 90" className="w-14 h-14 drop-shadow">
-            <defs>
-              <linearGradient id="ai-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ae8dff" />
-                <stop offset="100%" stopColor="#c7b5ff" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M50 80 L10 40 A20 20 0 0 1 50 15 A20 20 0 0 1 90 40 Z"
-              fill="url(#ai-grad)"
-            />
-            <text
-              x="50"
-              y="42"
-              textAnchor="middle"
-              fontSize="46"
-              fontWeight="700"
-              fill="white"
-              dominantBaseline="middle"
-            >
-              AI
-            </text>
-          </svg>
-        </span>
-
-        <span className="font-bold z-10 drop-shadow-md bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] bg-clip-text text-transparent">
-          ffinity
-        </span>
-      </h1>
+      <Link href="/">
+        <h1 className="text-3xl font-bold select-none flex items-center ">
+          <span className="relative translate-x-3 translate-y-1">
+            <svg viewBox="0 0 100 90" className="w-16 h-16 drop-shadow">
+              <defs>
+                <linearGradient
+                  id="ai-grad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#ae8dff" />
+                  <stop offset="100%" stopColor="#c7b5ff" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M50 80 L10 40 A20 20 0 0 1 50 15 A20 20 0 0 1 90 40 Z"
+                fill="url(#ai-grad)"
+              />
+              <text
+                x="50"
+                y="42"
+                textAnchor="middle"
+                fontSize="48"
+                fontWeight="700"
+                fill="white"
+                dominantBaseline="middle"
+              >
+                AI
+              </text>
+            </svg>
+          </span>
+          <span className="font-bold z-10 drop-shadow-md bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] bg-clip-text text-transparent">
+            ffinity
+          </span>
+        </h1>
+      </Link>
 
       <div className="flex items-center">
         <span className="mr-2 md:hidden text-lg font-semibold drop-shadow-sm bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">

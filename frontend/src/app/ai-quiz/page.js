@@ -32,7 +32,7 @@ const Q = [
   "¿Qué actividad o pasión hace que pierdas la noción del tiempo?",
 ];
 
-export default function AIQuiz() {
+function AIQuiz() {
   const { data, refetch } = useQuery(GET_AI_PROFILE, {
     fetchPolicy: "network-only",
   });
@@ -180,3 +180,5 @@ export default function AIQuiz() {
     </motion.div>
   );
 }
+
+export default ProtectedRoute(AIQuiz);

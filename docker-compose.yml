@@ -40,7 +40,7 @@ services:
   #     DB_HOST: db
   #     DB_PORT: 3306
   #     REDIS_HOST: redis
-  #     REDIS_PORT: 6379
+  #     REDIS_PORT: 6679
   #     JWT_SECRET: ${JWT_SECRET:-supersecret}
   #     OPENAI_API_KEY: ${OPENAI_API_KEY:?set_in_.env}
   #     PORT: 2159
@@ -60,7 +60,7 @@ services:
   #   environment:
   #     NEXT_PUBLIC_BACKEND_URL: http://localhost:2159/graphql
   #   ports:
-  #     - "4020:3000"
+  #     - "3000:3000"
   #   depends_on:
   #     - backend
   #   networks: [aiffinity_network]

@@ -2,29 +2,92 @@
 "use client";
 
 import { useContext } from "react";
+import Link from "next/link";
 import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Link from "next/link";
+import AIFlag from "@/components/AIFlag";
 
 function HomePage() {
   const { user, logout } = useContext(AuthContext);
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6">
-      <h1 className="text-2xl font-bold mb-4">Bienvenido, {user.email}</h1>
-      <button
-        onClick={logout}
-        className="mb-4 p-2 bg-red-500 text-white rounded hover:bg-red-600"
+    <main
+      className="
+        flex flex-col items-center justify-center
+        min-h-[calc(100vh-4rem)]   /* quitamos la altura del header */
+        text-center px-6
+      "
+    >
+      <h1 className="text-6xl pb-20 font-bold select-none flex items-center ">
+        <span className="relative translate-x-7 translate-y-2">
+          <svg viewBox="0 0 100 90" className="w-32 h-32 drop-shadow">
+            <defs>
+              <linearGradient id="ai-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ae8dff" />
+                <stop offset="100%" stopColor="#c7b5ff" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M50 80 L10 40 A20 20 0 0 1 50 15 A20 20 0 0 1 90 40 Z"
+              fill="url(#ai-grad)"
+            />
+            <text
+              x="50"
+              y="42"
+              textAnchor="middle"
+              fontSize="48"
+              fontWeight="700"
+              fill="white"
+              dominantBaseline="middle"
+            >
+              AI
+            </text>
+          </svg>
+        </span>
+        <span className="font-bold z-10 drop-shadow-md bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] bg-clip-text text-transparent">
+          ffinity
+          {user?.hasAIProfile && <AIFlag className="ml-0.5 inline-block" />}
+        </span>
+      </h1>
+
+      <p
+        className="
+          max-w-xl text-lg sm:text-xl text-slate-700/90
+          mb-10 leading-relaxed
+        "
       >
-        Cerrar Sesión
-      </button>
-      {/* <Link
-        href="/chat"
-        className="inline-block ml-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Ir al Chat
-      </Link> */}
-    </div>
+        Descubre una nueva forma de conectar: la IA analiza tu personalidad y te
+        ayuda a encontrar matches realmente afines &nbsp;
+        <span className="whitespace-nowrap">
+          (¡y a romper el hielo&nbsp;😉!)
+        </span>
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Link
+          href="/discover"
+          className="
+            px-8 py-3 rounded-full font-semibold text-white text-lg
+            shadow-lg transition
+            bg-gradient-to-r from-[#B89CFF] to-[#CBA4FF]
+            hover:from-[#CBA4FF] hover:to-[#B89CFF] hover:shadow-xl
+          "
+        >
+          Empezar a descubrir
+        </Link>
+
+        <button
+          onClick={logout}
+          className="
+            px-8 py-3 rounded-full font-semibold text-slate-600 text-lg
+            bg-white/80 backdrop-blur ring-1 ring-slate-300 shadow
+            hover:bg-white hover:shadow-md transition
+          "
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </main>
   );
 }
 

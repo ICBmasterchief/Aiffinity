@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import Providers from "@/components/Providers";
 import Header from "@/components/Header";
 import MatchNotifier from "@/components/MatchNotifier";
+import { chivo } from "@/app/fonts";
 
 export const metadata = {
   title: "AIffinity",
@@ -11,7 +12,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={chivo.variable}>
       <body
         className="
           m-0
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
           bg-no-repeat
           bg-[length:100%_100%]
           overflow-x-hidden
+          font-sans
         "
       >
         <Providers>

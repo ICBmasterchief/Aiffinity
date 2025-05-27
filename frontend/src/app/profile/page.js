@@ -101,7 +101,7 @@ function ProfilePage() {
       className="max-w-5xl p-8 mx-auto my-6 bg-white/60 backdrop-blur-md rounded-3xl shadow-lg grid grid-cols-1 lg:grid-cols-3 gap-8"
     >
       <div className="lg:col-span-2">
-        <h2 className="text-xl font-bold drop-shadow-md mb-4 bg-gradient-to-r from-[#B89CFF] to-[#E8D7FF] bg-clip-text text-transparent">
+        <h2 className="text-xl font-bold drop-shadow-md mb-4 bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">
           Tus Fotos
         </h2>{" "}
         <PhotoGrid
@@ -112,7 +112,7 @@ function ProfilePage() {
       </div>
 
       <div className="space-y-6">
-        <h2 className="text-xl font-bold drop-shadow-md mb-4 bg-gradient-to-r from-[#B89CFF] to-[#E8D7FF] bg-clip-text text-transparent">
+        <h2 className="text-xl font-bold drop-shadow-md mb-4 bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">
           Editar Perfil
         </h2>{" "}
         <form onSubmit={handleSubmit} className="space-y-4">

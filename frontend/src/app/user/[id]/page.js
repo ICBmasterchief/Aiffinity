@@ -20,7 +20,7 @@ function UserViewer() {
 
   return (
     <>
-      <h1 className="text-2xl text-center m-4 font-bold drop-shadow-md text-slate-500">
+      <h1 className="text-2xl text-center m-4 font-bold drop-shadow-md bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">
         Perfil de {data?.getUser.name}:
       </h1>
       <motion.div

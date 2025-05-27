@@ -1,21 +1,27 @@
 # backend/Dockerfile
-FROM node:16-alpine
 
-# Establecer directorio de trabajo
+# BUILD
+FROM node:20-slim AS builder
+
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
-COPY package.json ./
-COPY package-lock.json ./
+COPY package*.json ./
 
-# Instalar dependencias
-RUN npm install
+RUN npm ci --omit=dev
 
-# Copiar el resto de la aplicación
 COPY . .
 
-# Exponer el puerto
+# RUNTIME
+FROM node:20-slim
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+USER node
+
 EXPOSE 2159
 
-# Comando para iniciar la aplicación
 CMD ["npm", "start"]
+

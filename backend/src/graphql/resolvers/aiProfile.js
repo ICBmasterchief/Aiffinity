@@ -67,6 +67,7 @@ const aiProfileResolvers = {
       const summary = choices[0].message.content.trim();
 
       if (/^perfil insuficiente/i.test(summary)) {
+        throw new GraphQLError("perfil insuficiente");
         return false;
       }
 

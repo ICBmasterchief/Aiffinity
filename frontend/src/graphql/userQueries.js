@@ -1,16 +1,6 @@
-// src/graphql/userQueries.js
+// frontend/src/graphql/userQueries.js
 
 import { gql } from "@apollo/client";
-
-export const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      name
-      email
-    }
-  }
-`;
 
 export const GET_USER = gql`
   query GetUser($id: ID!) {
@@ -18,6 +8,19 @@ export const GET_USER = gql`
       id
       name
       email
+      description
+      age
+      gender
+      searchGender
+      searchMinAge
+      searchMaxAge
+      mainPhoto
+      photos {
+        id
+        filePath
+        position
+      }
+      hasAIProfile
     }
   }
 `;

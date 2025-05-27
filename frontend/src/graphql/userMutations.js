@@ -1,4 +1,4 @@
-// src/graphql/userMutations.js
+// frontend/src/graphql/userMutations.js
 
 import { gql } from "@apollo/client";
 
@@ -15,5 +15,33 @@ export const REGISTER_USER = gql`
 export const LOGIN_USER = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password)
+  }
+`;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile(
+    $description: String
+    $age: Int
+    $gender: String
+    $searchGender: String
+    $searchMinAge: Int
+    $searchMaxAge: Int
+  ) {
+    updateProfile(
+      description: $description
+      age: $age
+      gender: $gender
+      searchGender: $searchGender
+      searchMinAge: $searchMinAge
+      searchMaxAge: $searchMaxAge
+    ) {
+      id
+      description
+      age
+      gender
+      searchGender
+      searchMinAge
+      searchMaxAge
+    }
   }
 `;

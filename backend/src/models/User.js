@@ -1,6 +1,8 @@
-// src/models/User.js
+// backend/src/models/User.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import ChatMessage from "./ChatMessage.js";
+import UserAIProfile from "./UserAIProfile.js";
 
 const User = sequelize.define("User", {
   id: {
@@ -21,7 +23,38 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  // Proximos nuevos campos
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.ENUM("hombre", "mujer"),
+    allowNull: true,
+  },
+  searchGender: {
+    type: DataTypes.ENUM("hombres", "mujeres", "ambos"),
+    allowNull: true,
+  },
+  searchMinAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 18,
+  },
+  searchMaxAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 99,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
+
+User.hasMany(ChatMessage, { foreignKey: "userId" });
+ChatMessage.belongsTo(User, { foreignKey: "userId" });
+
+User.hasOne(UserAIProfile, { foreignKey: "userId" });
+UserAIProfile.belongsTo(User, { foreignKey: "userId" });
 
 export default User;

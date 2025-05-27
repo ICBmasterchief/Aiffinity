@@ -3,20 +3,30 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 4020",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.0",
+    "@apollo/client": "^3.13.7",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@next/font": "^14.2.15",
     "@tailwindcss/postcss": "^4.0.6",
+    "apollo-upload-client": "^18.0.1",
     "autoprefixer": "^10.4.20",
+    "framer-motion": "^12.10.0",
     "graphql": "^16.10.0",
+    "graphql-ws": "^6.0.4",
     "jwt-decode": "^4.0.0",
     "next": "^15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-range": "^1.10.0",
+    "react-swipeable": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

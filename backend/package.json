@@ -13,18 +13,27 @@
   "license": "ISC",
   "description": "Backend para AIffinity",
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.23",
     "apollo-server": "^3.13.0",
     "apollo-server-express": "^3.13.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "graphql": "^16.9.0",
+    "graphql-redis-subscriptions": "^2.7.0",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-upload-ts": "^2.1.2",
+    "graphql-ws": "^6.0.4",
+    "ioredis": "^5.6.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.4",
     "openai": "^4.73.1",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "@faker-js/faker": "^9.6.0",
+    "nodemon": "^3.1.7",
+    "sequelize-cli": "^6.6.2"
   }
 }

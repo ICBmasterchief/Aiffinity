@@ -1,62 +1,86 @@
-// src/index.js
+// backend/src/index.js
+import "dotenv/config";
+import http from "http";
 import express from "express";
+import cors from "cors";
+import path from "path";
 import { ApolloServer } from "apollo-server-express";
-import { authenticate, sync } from "./config/database.js"; // Ahora deberían funcionar correctamente
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { graphqlUploadExpress } from "graphql-upload-ts";
+import jwt from "jsonwebtoken";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/use/ws";
 import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import { authenticate, sync } from "./config/database.js";
 
-dotenv.config();
+const buildContext = (source) => {
+  let token = "";
 
-const app = express();
+  if (source?.headers) {
+    token = source.headers.authorization || "";
+  } else if (source?.authorization) {
+    token = source.authorization;
+  }
 
-async function startServer() {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: ({ req }) => {
-      // Obtener el token de las cabeceras
-      const token = req.headers.authorization || "";
-      // Verificar y extraer el usuario del token
-      let user = null;
-      if (token) {
-        try {
-          const decoded = jwt.verify(
-            token.replace("Bearer ", ""),
-            process.env.JWT_SECRET
-          );
-          user = decoded;
-        } catch (error) {
-          console.error("Token inválido:", error);
-        }
-      }
-      return { user };
-    },
-    introspection: true, // Esto solo para que funcione playground en pro
-    playground: true, // -- Esto solo para que funcione playground en pro
+  if (token.startsWith("Bearer ")) token = token.replace("Bearer ", "");
+
+  let user = null;
+  if (token) {
+    try {
+      user = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+      console.warn("Token inválido o expirado");
+    }
+  }
+  return { user, req: source };
+};
+
+(async () => {
+  await authenticate();
+  await sync();
+
+  const app = express();
+  app.use(cors());
+
+  app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 10 }));
+
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+  const apollo = new ApolloServer({
+    schema,
+    context: ({ req }) => buildContext(req),
+    subscriptions: false,
+  });
+  await apollo.start();
+  apollo.applyMiddleware({ app, path: "/graphql" });
+
+  const httpServer = http.createServer(app);
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/graphql",
   });
 
-  await server.start();
-  server.applyMiddleware({ app, path: "/graphql" });
+  const wsCleanup = useServer(
+    {
+      schema,
+      context: (ctx) => buildContext(ctx.connectionParams),
+    },
+    wsServer
+  );
 
-  const PORT = process.env.PORT;
+  apollo.serverWillStart = async () => ({
+    async drainServer() {
+      await wsCleanup.dispose();
+    },
+  });
 
-  try {
-    await authenticate();
-    console.log("Conexión a la base de datos establecida.");
-
-    await sync();
-    console.log("Modelos sincronizados con la base de datos.");
-
-    app.listen(PORT, () => {
-      console.log(
-        `Servidor corriendo en http://localhost:${PORT}${server.graphqlPath}`
-      );
-    });
-  } catch (error) {
-    console.error("Error al conectar a la base de datos:", error);
-  }
-}
-
-startServer();
+  const PORT = process.env.PORT || 2159;
+  httpServer.listen(PORT, () => {
+    console.log(`HTTP  : http://localhost:${PORT}${apollo.graphqlPath}`);
+    console.log(`WS    : ws://localhost:${PORT}${apollo.graphqlPath}`);
+  });
+})();

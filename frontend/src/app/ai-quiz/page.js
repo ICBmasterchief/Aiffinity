@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import useToast from "@/hooks/useToast";
 import Toast from "@/components/Toast";
 import { motion } from "framer-motion";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Q = [
   "¿Cómo describirías tu plan ideal de fin de semana?",

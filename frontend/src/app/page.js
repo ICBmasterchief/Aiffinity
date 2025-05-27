@@ -18,7 +18,7 @@ function HomePage() {
         text-center px-6
       "
     >
-      <h1 className="text-6xl pb-20 font-bold select-none flex items-center ">
+      <h1 className="text-6xl pb-20 -translate-x-4 font-bold select-none flex items-center ">
         <span className="relative translate-x-7 translate-y-2">
           <svg viewBox="0 0 100 90" className="w-32 h-32 drop-shadow">
             <defs>

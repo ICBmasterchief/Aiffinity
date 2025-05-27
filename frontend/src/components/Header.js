@@ -66,7 +66,7 @@ export default function Header() {
       "
     >
       <Link href="/">
-        <h1 className="text-3xl font-bold select-none flex items-center ">
+        <h1 className="text-3xl font-bold select-none flex items-center -translate-x-4 ">
           <span className="relative translate-x-3 translate-y-1">
             <svg viewBox="0 0 100 90" className="w-16 h-16 drop-shadow">
               <defs>

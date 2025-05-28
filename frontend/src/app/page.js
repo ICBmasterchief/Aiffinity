@@ -76,16 +76,17 @@ function HomePage() {
           Empezar a descubrir
         </Link>
 
-        <button
-          onClick={logout}
+        <Link
+          href="/ai-quiz"
           className="
-            px-8 py-3 rounded-full font-semibold text-slate-600 text-lg
-            bg-white/80 backdrop-blur ring-1 ring-slate-300 shadow
-            hover:bg-white hover:shadow-md transition
+            px-8 py-3 rounded-full font-semibold text-white text-lg
+            shadow-lg transition
+            bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] backdrop-blur 
+            hover:from-[#FFD3A5] hover:to-[#FF9A9E] hover:shadow-xl
           "
         >
-          Cerrar sesión
-        </button>
+          Crea tu perfil AIffinity
+        </Link>
       </div>
     </main>
   );

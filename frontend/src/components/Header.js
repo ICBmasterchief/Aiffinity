@@ -2,18 +2,23 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useContext, useRef, useEffect } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
 import { GET_USER } from "@/graphql/userQueries";
 import { useQuery } from "@apollo/client";
 import { AuthContext } from "@/context/AuthContext";
 import { useNotifs } from "@/context/NotificationsContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const { notifs } = useNotifs();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
+
+  const pathname = usePathname();
+  const showLogo = pathname !== "/";
 
   const { data } = useQuery(GET_USER, {
     variables: { id: user?.userId },
@@ -57,55 +62,66 @@ export default function Header() {
   return (
     <header
       ref={menuRef}
-      className="
+      className={`
         sticky top-0 z-30 h-16
          bg-[#e4e6ff]/60 backdrop-blur
         text-slate-800 shadow-md
-        flex items-center justify-between
+        flex items-center ${showLogo ? "justify-between" : "justify-end"}
         px-4 md:px-8
-      "
+      `}
     >
-      <Link href="/">
-        <h1 className="text-3xl font-bold select-none flex items-center -translate-x-4 ">
-          <span className="relative translate-x-3 translate-y-1">
-            <svg viewBox="0 0 100 90" className="w-16 h-16 drop-shadow">
-              <defs>
-                <linearGradient
-                  id="ai-grad"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#ae8dff" />
-                  <stop offset="100%" stopColor="#c7b5ff" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M50 80 L10 40 A20 20 0 0 1 50 15 A20 20 0 0 1 90 40 Z"
-                fill="url(#ai-grad)"
-              />
-              <text
-                x="50"
-                y="42"
-                textAnchor="middle"
-                fontSize="48"
-                fontWeight="700"
-                fill="white"
-                dominantBaseline="middle"
-              >
-                AI
-              </text>
-            </svg>
-          </span>
-          <span className="font-bold z-10 drop-shadow-md bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] bg-clip-text text-transparent">
-            ffinity
-          </span>
-        </h1>
-      </Link>
+      <AnimatePresence initial={false} mode="popLayout">
+        {showLogo && (
+          <Link href="/">
+            <motion.h1
+              key="logo"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="text-3xl font-bold select-none flex items-center"
+            >
+              <span className="relative translate-x-3 translate-y-1">
+                <svg viewBox="0 0 100 90" className="w-16 h-16 drop-shadow">
+                  <defs>
+                    <linearGradient
+                      id="ai-grad"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#ae8dff" />
+                      <stop offset="100%" stopColor="#c7b5ff" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M50 80 L10 40 A20 20 0 0 1 50 15 A20 20 0 0 1 90 40 Z"
+                    fill="url(#ai-grad)"
+                  />
+                  <text
+                    x="50"
+                    y="42"
+                    textAnchor="middle"
+                    fontSize="48"
+                    fontWeight="700"
+                    fill="white"
+                    dominantBaseline="middle"
+                  >
+                    AI
+                  </text>
+                </svg>
+              </span>
+              <span className="font-bold z-10 drop-shadow-md bg-gradient-to-r from-[#FF9A9E] to-[#FFD3A5] bg-clip-text text-transparent">
+                ffinity
+              </span>
+            </motion.h1>
+          </Link>
+        )}
+      </AnimatePresence>
 
       <div className="flex items-center">
-        <span className="mr-2 md:hidden text-lg font-semibold drop-shadow-sm bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">
+        <span className="mr-2 md:hidden text-[clamp(0.9rem,4vw,1.25rem)] text-right font-semibold drop-shadow-md text-slate-800">
           {userName && `Hola, ${userName}`}
         </span>
 
@@ -130,7 +146,15 @@ export default function Header() {
               AIffinity-Quiz
             </Link>
 
-            <span className="ml-2 md:ml-4 text-lg font-semibold drop-shadow-sm bg-gradient-to-r from-[#9d64ff] to-[#be8cff] bg-clip-text text-transparent">
+            <button
+              onClick={logout}
+              className={`${navBtn} hover:text-[#ff6996] flex justify-between`}
+            >
+              <FiLogOut size={20} className="pt-1" />
+              <span>Salir</span>
+            </button>
+
+            <span className="ml-2 md:ml-4 text-lg font-semibold drop-shadow-md text-slate-800">
               {userName && `Hola, ${userName}`}
             </span>
           </nav>
@@ -191,6 +215,13 @@ export default function Header() {
             >
               AIffinity-Quiz
             </Link>
+            <button
+              onClick={logout}
+              className={`${mobBtn} text-[#e9799b] flex flex-row-reverse items-center gap-2 justify-start`}
+            >
+              <FiLogOut size={20} className="" />
+              <span>Salir</span>
+            </button>
           </nav>
         )}
       </div>

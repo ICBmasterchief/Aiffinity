@@ -48,6 +48,7 @@ const matchResolvers = {
       return {
         id: match.id,
         user: otherUser,
+        compat: match.compat,
       };
     },
   },

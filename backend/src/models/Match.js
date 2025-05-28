@@ -16,6 +16,10 @@ const Match = sequelize.define("Match", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  compat: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
 
 export default Match;

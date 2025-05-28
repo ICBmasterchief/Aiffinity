@@ -108,7 +108,7 @@ function MatchesPage() {
                     </span>
                   )}
                   <Link
-                    href={`/user/${m.user.id}`}
+                    href={`/user/${m.user.id}?match=${m.id}`}
                     scroll={false}
                     className="relative group"
                   >

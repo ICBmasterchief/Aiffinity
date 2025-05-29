@@ -13,7 +13,7 @@ module.exports = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        sans: ["var(--font-chivo)", "sans-serif"],
+        sans: ['"Chivo"', "ui-sans-serif", "system-ui"],
       },
     },
   },

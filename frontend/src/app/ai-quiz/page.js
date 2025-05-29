@@ -3,7 +3,7 @@
 "use client";
 
 import { useQuery, useMutation } from "@apollo/client";
-import { SAVE_AI_PROFILE, GET_AI_PROFILE } from "@/graphql/aiProfile";
+import { SAVE_AI_PROFILE, GET_AI_PROFILE } from "@/graphql/aiProfileQueries";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useToast from "@/hooks/useToast";

@@ -3,7 +3,7 @@
 
 import { useState, useContext, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import { LOGIN_USER } from "@/graphql/userMutations";
+import { LOGIN_USER } from "@/graphql/userQueries";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/Toast";

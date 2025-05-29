@@ -30,3 +30,9 @@ export const GET_MATCH_INFO = gql`
     }
   }
 `;
+
+export const DELETE_MATCH = gql`
+  mutation DeleteMatch($matchId: ID!) {
+    deleteMatch(matchId: $matchId)
+  }
+`;

@@ -7,12 +7,12 @@ import {
   GET_CONVERSATION,
   SEND_MESSAGE,
   CONVERSATION_MESSAGE_SUBSCRIPTION,
-} from "@/graphql/chatConversationQueries";
+} from "@/graphql/chatConversation";
 import {
   STARTER_STATUS,
   GENERATE_STARTER,
   SYSTEM_TOPIC_ADDED,
-} from "@/graphql/chatStarter";
+} from "@/graphql/chatStarterQueries";
 import { AuthContext } from "@/context/AuthContext";
 import { useNotifs } from "@/context/NotificationsContext";
 import { IoSend } from "react-icons/io5";

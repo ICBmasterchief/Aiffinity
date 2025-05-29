@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { AuthContext } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { GET_USER } from "@/graphql/userQueries";
-import { UPDATE_PROFILE } from "@/graphql/userMutations";
+import { UPDATE_PROFILE } from "@/graphql/userQueries";
 import PhotoGrid from "@/components/PhotoGrid";
 import { motion } from "framer-motion";
 import Toast from "@/components/Toast";

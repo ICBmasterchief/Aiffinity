@@ -25,14 +25,6 @@ export const authenticate = async () => {
 };
 
 export const sync = async () => {
-  // try {
-  //   await sequelize.sync({ alter: true }); // Usar `force: true` temporalmente para reiniciar la BD
-  //   console.log("Modelos sincronizados con la base de datos.");
-  // } catch (error) {
-  //   console.error("Error al sincronizar modelos:", error);
-  //   throw error;
-  // }
-
   console.log(
     "Sincronización de modelos desactivada. Se usan migraciones para gestionar cambios en el esquema."
   );

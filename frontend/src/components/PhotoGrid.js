@@ -6,7 +6,7 @@ import {
   UPLOAD_PHOTOS,
   DELETE_PHOTO,
   REORDER_PHOTOS,
-} from "@/graphql/photoMutations";
+} from "@/graphql/photoQueries";
 import { useState, useEffect } from "react";
 import {
   DndContext,

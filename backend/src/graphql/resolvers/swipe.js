@@ -2,8 +2,6 @@
 import Swipe from "../../models/Swipe.js";
 import User from "../../models/User.js";
 import Match from "../../models/Match.js";
-import { Op } from "sequelize";
-import sequelize from "../../config/database.js";
 import Notification from "../../models/Notification.js";
 import redisPubSub from "../../redisPubSub.js";
 import UserPhoto from "../../models/UserPhoto.js";

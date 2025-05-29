@@ -15,7 +15,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.removeColumn("Users", "searchMinAge");
     await queryInterface.removeColumn("Users", "searchMaxAge");
   },

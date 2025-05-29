@@ -14,7 +14,7 @@ function HomePage() {
     <main
       className="
         flex flex-col items-center justify-center
-        min-h-[calc(100vh-4rem)]   /* quitamos la altura del header */
+        min-h-[calc(100vh-4rem)]
         text-center px-6
       "
     >

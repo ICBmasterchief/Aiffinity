@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     const users = [];
     const totalUsers = 50;
     const fixedPassword = "patata";
@@ -47,7 +47,7 @@ module.exports = {
     await queryInterface.bulkInsert("Users", users, {});
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete("Users", null, {});
   },
 };

@@ -6,7 +6,7 @@ import cors from "cors";
 import path from "path";
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { graphqlUploadExpress } from "graphql-upload-ts";
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import jwt from "jsonwebtoken";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";

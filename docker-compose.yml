@@ -45,9 +45,11 @@ services:
       DB_NAME: aiffinity_db
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      JWT_SECRET: ${JWT_SECRET}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      NODE_ENV: production
+      JWT_SECRET: tu_secreto_jwt
+      OPENAI_API_KEY: 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
+      CLOUDINARY_CLOUD_NAME: dlutrgfri
+      CLOUDINARY_API_KEY: 516379456761389
+      CLOUDINARY_API_SECRET: qJ06Vkue-VSPnFwqpAco5WN0T60
     ports:
       - "2159:2159"
     restart: unless-stopped
@@ -58,10 +60,6 @@ services:
       context: ./frontend
     depends_on:
       - backend
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:2159
-      API_INTERNAL_URL: http://backend:2159
-      NODE_ENV: production
     ports: ["3000:3000"]
     restart: unless-stopped
     networks: [aiffinity_network]

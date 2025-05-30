@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: aiffinity_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: MyPassword_aiffinity
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-MyRootPassword_aiffinity}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       TZ: Europe/Madrid
     volumes:
       - db_data:/var/lib/mysql
@@ -18,7 +18,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD} -h localhost",
+          "mysqladmin ping -u root -p$${DB_ROOT_PASSWORD} -h localhost",
         ]
       interval: 10s
       timeout: 5s
@@ -40,16 +40,18 @@ services:
       - redis
     environment:
       DB_HOST: db
-      DB_USER: user
-      DB_PASSWORD: MyPassword_aiffinity
-      DB_NAME: aiffinity_db
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: tu_secreto_jwt
-      OPENAI_API_KEY: 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
-      CLOUDINARY_CLOUD_NAME: dlutrgfri
-      CLOUDINARY_API_KEY: 516379456761389
-      CLOUDINARY_API_SECRET: qJ06Vkue-VSPnFwqpAco5WN0T60
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      NODE_ENV: production
     ports:
       - "2159:2159"
     restart: unless-stopped
@@ -60,6 +62,8 @@ services:
       context: ./frontend
     depends_on:
       - backend
+    environment:
+      NODE_ENV: production
     ports: ["3000:3000"]
     restart: unless-stopped
     networks: [aiffinity_network]

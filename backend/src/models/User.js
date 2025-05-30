@@ -4,52 +4,56 @@ import sequelize from "../config/database.js";
 import ChatMessage from "./ChatMessage.js";
 import UserAIProfile from "./UserAIProfile.js";
 
-const User = sequelize.define("User", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+const User = sequelize.define(
+  "User",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    age: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    gender: {
+      type: DataTypes.ENUM("hombre", "mujer"),
+      allowNull: true,
+    },
+    searchGender: {
+      type: DataTypes.ENUM("hombres", "mujeres", "ambos"),
+      allowNull: true,
+    },
+    searchMinAge: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 18,
+    },
+    searchMaxAge: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 99,
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  age: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  gender: {
-    type: DataTypes.ENUM("hombre", "mujer"),
-    allowNull: true,
-  },
-  searchGender: {
-    type: DataTypes.ENUM("hombres", "mujeres", "ambos"),
-    allowNull: true,
-  },
-  searchMinAge: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 18,
-  },
-  searchMaxAge: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 99,
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-});
+  { timestamps: true }
+);
 
 User.hasMany(ChatMessage, { foreignKey: "userId" });
 ChatMessage.belongsTo(User, { foreignKey: "userId" });

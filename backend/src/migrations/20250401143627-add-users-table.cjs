@@ -42,6 +42,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.delete("Users");
+    await queryInterface.dropTable("Users");
   },
 };

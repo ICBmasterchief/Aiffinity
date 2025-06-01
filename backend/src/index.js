@@ -47,6 +47,10 @@ const buildContext = (source) => {
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+  app.get("/healthz", (_req, res) => {
+    return res.status(200).send("OK");
+  });
+
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   const apollo = new ApolloServer({
@@ -80,7 +84,7 @@ const buildContext = (source) => {
 
   const PORT = process.env.PORT || 2159;
   httpServer.listen(PORT, () => {
-    console.log(`HTTP  : http://localhost:${PORT}${apollo.graphqlPath}`);
-    console.log(`WS    : ws://localhost:${PORT}${apollo.graphqlPath}`);
+    console.log(`HTTP  : http://tu_url:${PORT}${apollo.graphqlPath}`);
+    console.log(`WS    : ws://tu_url:${PORT}${apollo.graphqlPath}`);
   });
 })();

@@ -7,14 +7,14 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
-const HTTP_URI = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/graphql`
-  : `/graphql`;
-const WS_URI = process.env.NEXT_PUBLIC_WS_URL
-  ? `${process.env.NEXT_PUBLIC_WS_URL}/graphql`
-  : `ws://${
-      typeof window !== "undefined" ? window.location.host : "localhost"
-    }:/graphql`;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const HTTP_URI = BASE_URL ? `${BASE_URL}/graphql` : `/graphql`;
+
+let WS_URI = `/graphql`;
+if (BASE_URL) {
+  WS_URI = BASE_URL.replace(/^http/, "ws") + "/graphql";
+}
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {

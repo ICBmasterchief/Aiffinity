@@ -41,7 +41,14 @@ const buildContext = (source) => {
   await sync();
 
   const app = express();
-  app.use(cors());
+  app.use(
+    cors({
+      origin: ["*"],
+      methods: ["GET", "POST", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+    })
+  );
 
   app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 10 }));
 

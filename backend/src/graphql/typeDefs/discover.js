@@ -5,7 +5,7 @@ import { gql } from "apollo-server-express";
 const discoverTypeDefs = gql`
   type MatchCandidate {
     user: User!
-    compat: Int # null si es candidato random
+    compat: Int
   }
 
   extend type Query {

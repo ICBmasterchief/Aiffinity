@@ -1,3 +1,4 @@
+// backend/src/config/config.cjs
 require("dotenv").config();
 
 module.exports = {

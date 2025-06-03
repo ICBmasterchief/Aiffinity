@@ -2,11 +2,11 @@
 import Swipe from "../../models/Swipe.js";
 import User from "../../models/User.js";
 import Match from "../../models/Match.js";
-import { Op } from "sequelize";
-import sequelize from "../../config/database.js";
 import Notification from "../../models/Notification.js";
 import redisPubSub from "../../redisPubSub.js";
 import UserPhoto from "../../models/UserPhoto.js";
+import { compatBetween } from "../../utils/compat.js";
+import UserAIProfile from "../../models/UserAIProfile.js";
 
 const NOTIF_TOPIC = "NOTIFICATION_ADDED";
 
@@ -41,7 +41,18 @@ const swipeResolvers = {
             .sort((a, b) => a - b);
           [match, matchCreated] = await Match.findOrCreate({
             where: { user1Id: id1, user2Id: id2 },
-          }).then(([m, created]) => [m, created]);
+            defaults: { compat: null },
+          });
+
+          if (matchCreated || match.compat === null) {
+            const meProf = await UserAIProfile.findByPk(userId);
+            const themProf = await UserAIProfile.findByPk(targetUserId);
+
+            if (meProf && themProf) {
+              const pct = compatBetween(meProf, themProf);
+              if (pct !== null) await match.update({ compat: pct });
+            }
+          }
         }
       }
 

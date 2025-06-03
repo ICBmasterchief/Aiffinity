@@ -3,7 +3,7 @@
 
 import { useQuery, useMutation } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
-import { LIKE_USER } from "@/graphql/swipeMutations";
+import { LIKE_USER } from "@/graphql/swipeQueries";
 import { GET_COMPATIBLE } from "@/graphql/discoverQueries";
 import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";

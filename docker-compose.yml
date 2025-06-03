@@ -1,12 +1,14 @@
+version: "3.9"
+
 services:
   db:
     image: mysql:8.0
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: aiffinity_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-MyPassword}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-MyRootPassword}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       TZ: Europe/Madrid
     volumes:
       - db_data:/var/lib/mysql
@@ -16,7 +18,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD} -h localhost",
+          "mysqladmin ping -u root -p$${DB_ROOT_PASSWORD} -h localhost",
         ]
       interval: 10s
       timeout: 5s
@@ -25,46 +27,46 @@ services:
 
   redis:
     image: redis:7-alpine
-    restart: always
+    restart: unless-stopped
     ports:
-      - "6679:6379"
+      - "6379:6379"
     networks: [aiffinity_network]
 
-  # backend:
-  #   build: ./backend
-  #   container_name: aiffinity_api
-  #   environment:
-  #     DB_NAME: aiffinity_db
-  #     DB_USER: user
-  #     DB_PASSWORD: ${MYSQL_PASSWORD:-MyPassword}
-  #     DB_HOST: db
-  #     DB_PORT: 3306
-  #     REDIS_HOST: redis
-  #     REDIS_PORT: 6679
-  #     JWT_SECRET: ${JWT_SECRET:-supersecret}
-  #     OPENAI_API_KEY: ${OPENAI_API_KEY:?set_in_.env}
-  #     PORT: 2159
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #   ports:
-  #     - "2159:2159"
-  #   networks: [aiffinity_network]
-  #   profiles: ["api"] # docker compose --profile api up
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+      - redis
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      NODE_ENV: production
+    ports:
+      - "2159:2159"
+    restart: unless-stopped
+    networks: [aiffinity_network]
 
-  # frontend:
-  #   build: ./frontend
-  #   container_name: aiffinity_web
-  #   environment:
-  #     NEXT_PUBLIC_BACKEND_URL: http://localhost:2159/graphql
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - backend
-  #   networks: [aiffinity_network]
-  #   profiles: ["web"] # docker compose --profile web up
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+    ports: ["3000:3000"]
+    restart: unless-stopped
+    networks: [aiffinity_network]
 
 networks:
   aiffinity_network:

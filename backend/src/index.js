@@ -6,7 +6,7 @@ import cors from "cors";
 import path from "path";
 import { ApolloServer } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { graphqlUploadExpress } from "graphql-upload-ts";
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import jwt from "jsonwebtoken";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
@@ -41,11 +41,15 @@ const buildContext = (source) => {
   await sync();
 
   const app = express();
-  app.use(cors());
+  app.use(cors({ origin: "*" }));
 
   app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 10 }));
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+  app.get("/healthz", (_req, res) => {
+    return res.status(200).send("OK");
+  });
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -80,7 +84,7 @@ const buildContext = (source) => {
 
   const PORT = process.env.PORT || 2159;
   httpServer.listen(PORT, () => {
-    console.log(`HTTP  : http://localhost:${PORT}${apollo.graphqlPath}`);
-    console.log(`WS    : ws://localhost:${PORT}${apollo.graphqlPath}`);
+    console.log(`HTTP  : http://tu_url:${PORT}${apollo.graphqlPath}`);
+    console.log(`WS    : ws://tu_url:${PORT}${apollo.graphqlPath}`);
   });
 })();

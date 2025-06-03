@@ -5,6 +5,7 @@ const matchTypeDefs = gql`
   type MatchSummary {
     id: ID!
     user: User!
+    compat: Int
   }
 
   extend type Query {

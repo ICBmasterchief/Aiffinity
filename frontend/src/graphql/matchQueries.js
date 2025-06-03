@@ -11,6 +11,7 @@ export const GET_MATCHES = gql`
         mainPhoto
         hasAIProfile
       }
+      compat
     }
   }
 `;
@@ -25,6 +26,13 @@ export const GET_MATCH_INFO = gql`
         mainPhoto
         hasAIProfile
       }
+      compat
     }
+  }
+`;
+
+export const DELETE_MATCH = gql`
+  mutation DeleteMatch($matchId: ID!) {
+    deleteMatch(matchId: $matchId)
   }
 `;

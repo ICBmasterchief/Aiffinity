@@ -2,13 +2,8 @@
 export function photoUrl(path = "") {
   if (!path) return "/default.jpg";
 
-  if (path.startsWith("http")) {
-    try {
-      const { pathname } = new URL(path);
-      return pathname;
-    } catch {
-      return path;
-    }
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
   }
 
   return path.startsWith("/") ? path : `/${path}`;

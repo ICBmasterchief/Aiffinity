@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     const users = [];
     const totalUsers = 50;
     const fixedPassword = "patata";
@@ -23,22 +23,24 @@ module.exports = {
         "ambos",
       ]);
 
-      const randomNumber = faker.number.int({ min: 0, max: 99 });
-      const photoUrl =
-        gender === "hombre"
-          ? `https://randomuser.me/api/portraits/men/${randomNumber}.jpg`
-          : `https://randomuser.me/api/portraits/women/${randomNumber}.jpg`;
-
       const email = `${firstName.toLowerCase()}@${lastName.toLowerCase()}.com`;
+
+      const age = faker.number.int({ min: 18, max: 65 });
+
+      const description = `Hola, me llamo ${firstName} ${lastName} y tengo ${age} años. Estoy aquí buscando ${
+        searchGender == "ambos" ? "ambos géneros" : searchGender
+      } :D`;
 
       users.push({
         name: `${firstName} ${lastName}`,
         email,
         password: hashedPassword,
-        age: faker.number.int({ min: 18, max: 65 }),
+        age,
         gender,
         searchGender,
-        photoUrl,
+        description,
+        searchMinAge: 18,
+        searchMaxAge: 99,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -47,7 +49,7 @@ module.exports = {
     await queryInterface.bulkInsert("Users", users, {});
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete("Users", null, {});
   },
 };

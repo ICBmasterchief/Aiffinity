@@ -1,12 +1,14 @@
 // backend/src/graphql/resolvers/userPhoto.js
-import { GraphQLUpload } from "graphql-upload-ts";
-import fs from "fs";
-import path from "path";
+
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 import UserPhoto from "../../models/UserPhoto.js";
-import crypto from "crypto";
 import sequelize from "../../config/database.js";
 import { Op } from "sequelize";
 import { GraphQLError } from "graphql";
+import {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} from "../../utils/cloudinary.js";
 
 const ALLOWED = {
   "image/jpeg": ".jpg",
@@ -23,24 +25,14 @@ const saveFile = async (createReadStream, userId, mimetype) => {
     });
   }
 
-  const dir = path.join("uploads", String(userId));
-  fs.mkdirSync(dir, { recursive: true });
+  const stream = createReadStream();
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  const buffer = Buffer.concat(chunks);
 
-  const ext = extFromMime;
-  const safeName =
-    Date.now() + "_" + crypto.randomBytes(4).toString("hex") + ext;
-
-  const filePath = path.join(dir, safeName);
-  const webPath = `uploads/${userId}/${safeName}`;
-
-  await new Promise((res, rej) =>
-    createReadStream()
-      .pipe(fs.createWriteStream(filePath))
-      .on("finish", res)
-      .on("error", rej)
-  );
-
-  return webPath.replace(/\\/g, "/");
+  const folder = `uploads/${userId}`;
+  const url = await uploadToCloudinary(buffer, folder);
+  return url;
 };
 
 const userPhotoResolvers = {
@@ -86,6 +78,17 @@ const userPhotoResolvers = {
       const photo = await UserPhoto.findByPk(photoId);
       if (!photo || photo.userId !== user.userId)
         throw new Error("No permitido");
+
+      try {
+        const url = new URL(photo.filePath);
+        let after = url.pathname.split("/upload/")[1];
+        after = after.replace(/^v\d+\//, "");
+        const publicId = after.replace(/\.[^/.]+$/, "");
+        await deleteFromCloudinary(publicId);
+      } catch (err) {
+        console.warn("⚠️ No se pudo borrar de Cloudinary:", err);
+      }
+
       const deletedPos = photo.position;
       await photo.destroy();
 

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_MATCHES } from "@/graphql/matchQueries";
+import { GET_MATCHES, DELETE_MATCH } from "@/graphql/matchQueries";
 import { MARK_NOTIFS_READ } from "@/graphql/notificationQueries";
 import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -12,7 +12,6 @@ import { photoUrl } from "@/utils/photoUrl";
 import { motion } from "framer-motion";
 import Toast from "@/components/Toast";
 import useToast from "@/hooks/useToast";
-import { DELETE_MATCH } from "@/graphql/matchMutations";
 import { IoClose } from "react-icons/io5";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import AIFlag from "@/components/AIFlag";
@@ -108,7 +107,7 @@ function MatchesPage() {
                     </span>
                   )}
                   <Link
-                    href={`/user/${m.user.id}`}
+                    href={`/user/${m.user.id}?match=${m.id}`}
                     scroll={false}
                     className="relative group"
                   >

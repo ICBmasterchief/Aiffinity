@@ -1,4 +1,4 @@
-// frontend/src/graphql/chatConversationQueries.js
+// frontend/src/graphql/chatConversation.js
 import { gql } from "@apollo/client";
 
 export const GET_CONVERSATION = gql`

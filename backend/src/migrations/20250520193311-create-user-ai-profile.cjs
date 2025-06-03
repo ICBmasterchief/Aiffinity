@@ -42,7 +42,7 @@ module.exports = {
     await queryInterface.addIndex("UserAIProfiles", ["createdAt"]);
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable("UserAIProfiles");
   },
 };

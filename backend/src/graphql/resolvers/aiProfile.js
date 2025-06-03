@@ -68,7 +68,6 @@ const aiProfileResolvers = {
 
       if (/^perfil insuficiente/i.test(summary)) {
         throw new GraphQLError("perfil insuficiente");
-        return false;
       }
 
       const embRes = await openai.embeddings.create({

@@ -55,6 +55,10 @@ const discoverResolvers = {
 
       const meProf = await UserAIProfile.findByPk(user.userId);
       if (meProf) {
+        const genderMap = { hombres: "hombre", mujeres: "mujer" };
+        const myPlural =
+          currentUser.gender === "hombre" ? "hombres" : "mujeres";
+
         const iaCands = await UserAIProfile.findAll({
           where: { userId: { [Op.notIn]: [user.userId, ...swipedIds] } },
           include: [
@@ -67,34 +71,42 @@ const discoverResolvers = {
                     currentUser.searchMaxAge,
                   ],
                 },
+                ...(currentUser.searchGender !== "ambos"
+                  ? { gender: genderMap[currentUser.searchGender] }
+                  : {}),
+                searchGender: {
+                  [Op.or]: ["ambos", myPlural],
+                },
               },
             },
           ],
         });
 
-        const picked = iaCands
-          .slice(0, K)
-          .map((prof) => ({
-            prof,
-            pct: compatBetween(meProf, prof),
-          }))
-          .filter((p) => p.pct !== null && p.pct > 5);
+        if (iaCands.length) {
+          const picked = iaCands
+            .slice(0, K)
+            .map((prof) => ({
+              prof,
+              pct: compatBetween(meProf, prof),
+            }))
+            .filter((p) => p.pct !== null && p.pct > 5);
 
-        if (picked.length && Math.random() > pFallback) {
-          const total = picked.reduce((s, p) => s + p.pct ** 2, 0);
-          let r = Math.random() * total;
-          let chosen = picked[0];
-          for (const p of picked) {
-            r -= p.pct ** 2;
-            if (r <= 0) {
-              chosen = p;
-              break;
+          if (picked.length && Math.random() > pFallback) {
+            const total = picked.reduce((s, p) => s + p.pct ** 2, 0);
+            let r = Math.random() * total;
+            let chosen = picked[0];
+            for (const p of picked) {
+              r -= p.pct ** 2;
+              if (r <= 0) {
+                chosen = p;
+                break;
+              }
             }
+            return {
+              user: chosen.prof.User,
+              compat: chosen.pct,
+            };
           }
-          return {
-            user: chosen.prof.User,
-            compat: chosen.pct,
-          };
         }
       }
 
